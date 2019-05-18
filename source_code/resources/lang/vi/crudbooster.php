@@ -1,0 +1,261 @@
+<?php
+return [
+    'email_footer'               => 'Đây là một email được gởi tự động từ hệ thống của chúng tôi, vui lòng không trả lời. ',
+    'login_message'              => 'Thông tin đăng nhập',
+    'text_forgot_password'       => 'Quên mât khẩu ?',
+    'page_title_login'           => 'Đăng nhập hệ thống',
+    'page_title_forgot'          => 'Quên mật khẩu',
+    'forgot_message'             => 'Nhập email của bạn để nhận mật khẩu mới',
+    "forgot_text_try_again"      => "Thử đăng nhập lại ?",
+    'text_no_notification'       => "Bạn không có thông báo nào",
+    'text_view_all_notification' => 'Xem tất cả',
+    'label_button_profile'       => "Thông tin tài khoản",
+    'filter_dialog_title'        => 'Tìm kiếm & sắp xếp',
+    'there_is_no_option'        => 'There is no any options setting for this inputType',
+    'no'                          => 'STT',
+
+    'text_enter_the_password'     => 'Enter your password to retrieve your session',
+    'text_or_sign_in'             => 'hoặc đăng nhập bằng user khác',
+    'text_default_add_new_module' => 'Tạo mới :module',
+    'text_default_list_module'    => 'Danh sách :module',
+    'text_default_help_password'  => 'Ít nhất 5 ký tự. Vui lòng bỏ trống nếu bạn không muốn đổi mật khẩu.',
+    'text_default_help_upload'    => 'Chỉ hỗ trợ các loại file : JPG, JPEG, PNG, GIF, BMP',
+    'text_default_help_number'    => 'Bạn chỉ có thể nhập số',
+    'text_default_help_email'     => 'Vui lòng nhập chính xác địa chỉ email',
+    'text_default_help_text'      => 'Bạn chỉ có thể nhập số',
+    'text_default_help_url'       => 'Vui lòng nhập chính xác URL',
+    'text_dashboard'              => 'Dashboard',
+    'text_delete'                 => 'Xóa',
+    'text_prefix_option'          => '** Chọn',
+    'text_loading'                => 'Đang tải dữ liệu...',
+
+    'message_after_logout'    => 'Cảm ơn, hẹn gặp lại!',
+    'message_forgot_password' => 'Chúng tôi sẽ gởi mật khẩu mới về email, vui lòng kiểm tra email !',
+
+    'page_not_found'      => 'Trời đất! Trang này không có, vui lòng xem trang khác',
+    'page_not_found_text' => 'Chúng tôi không thể tìm thấy trang mà bạn đang yêu cầu.',
+    'page_not_found_tips' => '* Please make sure the URL is correct<br/>
+                * Please make sure the font capitalizing is correct because case sensitive<br/>
+                * Maybe the page that you are looking for has been deleted by Admin<br/>
+                * You can go back by click Back Button at browser<br/>',
+
+    'log_try_view'            => 'Try view the data :name at :module',
+    'log_try_edit'            => 'Try edit the data :name at :module',
+    'log_try_add'             => 'Try add data at :module',
+    'log_try_add_save'        => 'Try add the data :name data at :module',
+    'log_try_delete'          => 'Try delete the :name data at :module',
+    'log_try_delete_selected' => 'Try delete selected at :module',
+    'log_try_delete_image'    => 'Try delete the image of :name data at :module',
+    'log_try_update'          => 'Try update the :name data at :module',
+    'log_add'                 => 'Tạo mới dữ liệu :name trong :module',
+    'log_update'              => 'Sửa dữ liệu :name trong :module',
+    'log_delete'              => 'Xóa dữ liệu :name trong :module',
+    'log_delete_image'        => 'Xóa ảnh của :name trong :module',
+    'log_login'               => ':email đăng nhập với địa chỉ IP :ip',
+    'log_forgot'              => 'Someone with IP :ip request a password for :email',
+    'log_logout'              => ':email đăng xuất',
+
+    'alert_delete_selected'         => 'Bạn chắc chắn muốn xóa tất cảu dữ liệu ?',
+    'alert_delete_selected_success' => 'Xóa thành công !',
+    'alert_bulk_action_button'      => 'Bạn chắc chắn muốn',
+    'alert_action'                  => 'Bạn đã :action thành công !',
+    'alert_add_data_success'        => 'Dữ liệu đã được tạo mới !',
+    'alert_add_data_failed'         => 'Lưu dữ liệu mới thất bại !',
+    'alert_update_data_success'     => 'Dữ liệu chỉnh sửa đã được lưu !',
+    'alert_update_data_failed'      => 'Lưu dữ liệu chỉnh sửa thất bại !',
+    'alert_delete_data_success'     => 'Xóa thành công !',
+    'alert_want_to_logout'          => 'Ban muốn đăng xuất ?',
+    'alert_warning'                 => "Cảnh báo",
+    'alert_danger'                  => 'Đã xảy ra lỗi ....',
+    'alert_success'                 => 'Yeah, thành công...',
+    'alert_info'                    => 'Thông báo',
+    'alert_primary'                 => 'Thông báo',
+    'alert_session_expired'         => 'Phiên đăng nhập của bạn đã hết hạn, vui lòng đăng nhập lại !',
+    'alert_password_wrong'          => 'Sai mật khẩu, vui lòng thử lại !',
+    'alert_required'                => 'Vui lòng nhập hết các trường dữ liệu được yêu cầu',
+    'alert_error_ajax'              => 'Okay, It is embarasing, something went wrong, we will fix it soon !',
+    'alert_validation_error'        => 'Dữ liệu không chính xác: :error',
+
+    'add_data_page_title'    => 'Tạo mới :module',
+    'edit_data_page_title'   => 'Sửa :module',
+    'detail_data_page_title' => 'Chi tiết :module',
+
+    'default_module_description' => 'Data List',
+
+    'delete_description_confirm' => "Bạn sẽ không thể lấy lại được dữ liệu!",
+    'delete_title_confirm'       => "Bạn chắc chứ ?",
+
+
+    'action_show_data'       => 'Hiển thị dữ liệu',
+    'action_add_data'        => 'Tạo mới',
+    'action_delete_selected' => 'Xóa dữ liệu đang chọn',
+
+    'action_label'       => 'Hành động',
+    'action_detail_data' => 'Chi tiết',
+    'action_edit_data'   => 'Sửa',
+    'action_delete_data' => 'Xóa',
+
+
+    'button_cancel'          => 'Hủy',
+    'button_add'             => 'Tạo mới',
+    'button_edit'            => 'Sửa',
+    'button_back'            => 'Quay về',
+    'button_save'            => 'Lưu',
+    'button_save_more'       => 'Lưu & Tạo mới',
+    'button_import'          => 'Import dữ liệu',
+    'button_export'          => 'Export dữ liệu',
+    'button_filter'          => 'Tìm kiếm và sắp xếp',
+    'button_close'           => 'Đóng',
+    'button_submit'          => 'Gởi',
+    'button_logout'          => 'Đăng xuất',
+    'button_sign_in'         => 'Đăng nhập',
+    'button_selected_action' => 'Áp dụng hành động',
+    'button_download_file'   => 'Download file',
+    'button_reset'           => 'Reset',
+
+    'export_dialog_title'            => "Export Data",
+    'export_dialog_filename'         => 'File Name',
+    'export_dialog_help_filename'    => 'You can rename the filename according to your whises',
+    'export_dialog_maxdata'          => "Max Data",
+    'export_dialog_help_maxdata'     => 'Minimum 1 and maximum 100,000 rows per export session',
+    'export_dialog_columns'          => 'Columns',
+    'export_dialog_format_export'    => 'Format Export',
+    'export_dialog_show_advanced'    => 'Show Advanced Export',
+    'export_dialog_page_size'        => 'Page Size',
+    'export_dialog_set_default'      => 'Set As Default Paper Size',
+    'export_dialog_page_orientation' => 'Page Orientation',
+
+    'import_page_title'         => 'Import dữ liệu :module',
+    'dashboard_default_text'    => 'Chào mừng bạn quay lại dashboard của :appname',
+    'form_back_to_list'         => 'Quay lại danh sách :module',
+    'not_logged_in'             => 'Bạn không đăng nhập !',
+    'menu_navigation'           => "Menu",
+    'table_data_not_found'      => "Không tìm thấy dữ liệu",
+    "notice_delete_file_upload" => "* If you want to upload other file, please first delete the file.",
+    "file_broken"               => "Oops looks like File was Broken !. Click Delete and Re-Upload.",
+
+    'denied_access' => 'Bạn không có quyền truy xuất khu vực này !',
+    'denied_update' => 'Bạn không có quyền chỉnh sửa dữ liệu này !',
+    'denied_create' => 'Bạn không có quyền tạo mới dữ liệu này !',
+    'denied_delete' => 'Bạn không có quyền xóa dữ liệu này !',
+
+    'user_image'           => 'Ảnh đại diện',
+    'online'               => 'Đang Online',
+    'controller_route_404' => 'Controller / Route Not Found',
+    'home'                 => 'Trang chủ',
+
+    'Privileges_Roles'    => 'Vai trò Users',
+    'Add_New_Privilege'   => 'Tạo mới vai trò',
+    'List_Privilege'      => 'Danh sách vai trò',
+    'add_user'            => 'Tạo mới User',
+    'List_users'          => 'Danh sách Users',
+    'Menu_Management'     => 'Quản lý Menu',
+    'Add_New_Setting'     => 'Tạo mới Cấu hình',
+    'Add_New_Module'      => 'Tạo mới Module',
+    'List_Module'         => 'Danh sách Module',
+    'Add_New_Statistic'   => 'Tạo mới Thống kê',
+    'List_Statistic'      => 'Danh sách Thống kê',
+    'Add_New_API'         => 'Tạo mới API',
+    'API_Generator'       => 'Quản lý API',
+    'Statistic_Builder'   => 'Xây dựng các Thống kê',
+    'Module_Generator'    => 'Quản lý Module',
+    'settings'            => 'Cấu hình',
+    'Users_Management'    => 'Quản lý users',
+    'list_API'            => 'Danh sách API (tài liệu)',
+    'Generate_Screet_Key' => 'Generate Secret Key',
+    'Add_New_Email'       => 'Tạo mới Email',
+    'List_Email_Template' => 'Danh sách mẫu Email',
+    'Email_Templates'     => 'Mẫu Email',
+    'Log_User_Access'     => 'Nhật ký truy cập',
+    'SUPERADMIN'          => 'SUPERADMIN',
+
+    'click_here' => 'Click vào đây',
+
+    /*
+     * this is for html direction to use in html and css classes like :
+     * pull-left , pull-right , text-right ...
+     * to make it easy to use the the view for rtl langs .
+     * unless your language use right-to-left direction , you should keep it as it is :
+     */
+    'right'      => 'right',
+    'left'       => 'left',
+
+    'all_rights_reserved' => 'All Rights Reserved',
+    'copyright'           => 'Copyright',
+    'powered_by'          => 'Powered by',
+
+    'notification_you_have'     => 'Bạn có',
+    'notification_notification' => 'thông báo',
+    'notification_new'          => 'Bạn có thông báo mới !',
+
+    'login_register_style'         => 'Giao diện đăng nhập, đăng ký',
+    'email_setting'                => 'Cấu hình email',
+    'application_setting'          => 'Cấu hình ứng dụng',
+
+    // table filter & sort 
+    'filter_select_operator_type'  => 'Select Operator Type',
+    'filter_ascending'             => 'ASCENDING',
+    'filter_descending'            => 'DESCENDING',
+    'filter_equal_to'              => '=(Equal to)',
+    'filter_like'                  => 'LIKE',
+    'filter_not_like'              => 'NOT LIKE',
+    'filter_greater_than_or_equal' => '>= (Greater Than or Equal)',
+    'filter_less_than_or_equal'    => '<= (Less Than or Equal)',
+    'filter_less_than'             => '< (Less Than)',
+    'filter_greater_than'          => '> (Greater Than)',
+    'filter_not_equal_to'          => '!= (Not Equal to)',
+    'filter_in'                    => 'IN',
+    'filter_not_in'                => 'NOT IN',
+    'filter_between'               => 'BETWEEN',
+    'filter_sort_ascending'        => 'Sắp xếp tăng',
+    'filter_sort_descending'       => 'Sắp xếp giảm',
+    'filter_eg'                    => 'e.g',
+    'filter_lorem_ipsum'           => 'Lorem ipsum',
+    'filter_lorem_ipsum_dolor_sit' => ' Lorem,Ipsum,Dolor Sit',
+    'filter_search'                => 'Tìm kiếm',
+    'filter_from'                  => 'từ',
+    'filter_to'                    => 'đến',
+
+    // confirmation
+    'confirmation_yes'             => 'Có!',
+    'confirmation_no'              => 'Không',
+
+    //filemanager
+    'chose_an_image'               => 'Chọn một ảnh ',
+    'chose_an_file'                => 'Chọn một file ',
+    
+    //action confirmation
+    'confirmation_title'            => 'Xác nhận',
+    'confirmation_text'             => 'Bạn chắc chắn muốn làm điều này?',
+    'confirmButtonText'             => 'Có',
+
+    
+    // privilege
+    'privileges_name'               =>'Tên vai trò',
+    'privileges_super_admin'        =>'Super Admin',
+    'privileges_standart_user'      =>'Standart user',
+    'privileges_ID'                 =>'ID',
+    'set_as_superadmin'             =>'Đặt làm Superadmin',
+    'chose_theme_color_select'      =>'** Chọn màu giao diện',
+    'chose_theme_color'             =>' Màu giao diện',
+    'privileges_configuration'      =>'Phân quyền',
+    'privileges_module_list_no'     =>'STT',
+    'privileges_module_list_mod_names'=>'Tên Module',
+    'privileges_module_list_view'   =>'Xem',
+    'privileges_module_list_create' =>'Tạo',
+    'privileges_module_list_read'   =>'Đọc',
+    'privileges_module_list_update' =>'Sửa',
+    'privileges_module_list_delete' =>'Xóa',
+    'is_group_privileges'           =>'Là nhóm vai trò',
+    'privileges_origin'           =>'Vai trò gốc',
+
+    //datamodal 
+    'datamodal_select'=>'Chọn',
+    'datamodal_search_and_enter'=>'Search and enter...',
+    'datamodal_enter_to_search'=>'Gõ để tìm ...',
+    'datamodal_browse_data'=>'Browse Data' ,
+
+    //customize
+    'Name'=>'Tên',
+    'setting_save_success'=>'Đã lưu cấu hình thành công !'
+];

@@ -1,0 +1,64 @@
+@media (min-width: 769px){
+    @media (max-height: 899px) {
+        .login-logo, .register-logo, .lockscreen-logo{
+            height: 170px;
+        }
+    }
+    @media (min-height: 900px) {
+        .login-logo, .register-logo, .lockscreen-logo{
+            height: 300px;
+        }
+    }
+    .login-box, .register-box, .lockscreen-wrapper{
+        margin: 2% auto 2% 50% !important;
+    }
+}
+@media (max-width: 768px){
+    .login-logo, .register-logo, .lockscreen-logo{
+        height: 100px;
+    }
+}
+.login-page, .register-page, .lockscreen{
+    background-position: top left;
+}
+.login-box-body{
+    box-shadow: none !important;
+    background: transparent !important;
+    color: #fff !important;
+}
+.login-box-msg, .register-box-msg{
+    font-size: x-large;
+}
+.login-footer{
+    position: fixed;
+    bottom: 10px;
+    text-align: center;
+    font-size: large;
+    width: 100%;
+}
+.user-panel>.image>img{
+    width: 45px;
+    height: 45px;
+}
+.sweet-alert p{
+    color: #000000 !important;
+}
+.bg-white{
+    background-color: #ffffff !important;
+}
+
+.customize-form-search .form-group{
+    margin-bottom: 0 !important;
+}
+.customize-form-search #form-limit-paging{
+    vertical-align: bottom;
+}
+.customize-form-search #form-limit-paging .input-group{
+    margin-bottom: 15px !important;
+}
+.customize-form-search .control-label{
+    width: fit-content !important;
+}
+.invisible{
+    visibility: hidden;;
+}

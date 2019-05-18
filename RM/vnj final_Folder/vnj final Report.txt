@@ -1,0 +1,60 @@
+Package Report
+
+-----------------------------------------------------------------------------
+Document:
+Name: vnj final.ai
+Color Mode: RGB color
+Color Profile: sRGB IEC61966-2.1
+Ruler Units: pixels
+Artboard Dimensions: 1200 px x 900 px
+Show Images in Outline Mode: OFF
+Highlight Substituted Fonts: OFF
+Highlight Substituted Glyphs: OFF
+Preserve Text Editability
+Simulate Colored Paper: OFF
+
+-----------------------------------------------------------------------------
+Spot Color Objects:
+
+-----------------------------------------------------------------------------
+Missing Fonts:NONE
+
+-----------------------------------------------------------------------------
+Protected Fonts that were not packaged:NONE
+
+-----------------------------------------------------------------------------
+Fonts:
+Arno Pro Caption (OTF)
+Trajan Pro 3 Bold (OTF)
+Trajan Pro 3 (OTF)
+San Francisco Display Regular (OTF)
+San Francisco Display Medium (OTF)
+San Francisco Display Bold (OTF)
+
+-----------------------------------------------------------------------------
+Embedded Fonts:
+NONE
+
+-----------------------------------------------------------------------------
+Missing Links:
+NONE
+
+-----------------------------------------------------------------------------
+Linked Images:
+
+D:\job\vnj\br2.psd
+Type: RGB
+Bits per Pixel: 24
+Channels: 3
+Size: 3164K, 1200 by 900 pixels
+Dimensions: 1202.835 by 902.126 points 
+Resolution: 71.83 by 71.83 pixels per inch
+
+
+D:\job\vnj\br.psd
+Type: RGB
+Bits per Pixel: 24
+Channels: 3
+Size: 3164K, 1200 by 900 pixels
+Dimensions: 1202.835 by 902.126 points 
+Resolution: 71.83 by 71.83 pixels per inch
