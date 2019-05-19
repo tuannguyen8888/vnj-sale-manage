@@ -1090,7 +1090,9 @@
             total_sale_exchange_g10 = Math.round(total_sale_exchange_g10 * 1000000) / 1000000;
             let debt_wage = $('#wage').val() ? Number($('#wage').val().replace(/,/g, '')) : 0;
             let pay_total_wage = $('#pay_total_wage').val() ? Number($('#pay_total_wage').val().replace(/,/g, '')) : 0;
-            total_sale_wage = debt_wage + total_order.wage - return_total.wage -  pay_total_wage;
+            let sampling_discount = $('#sampling_discount').val() ? Number($('#sampling_discount').val().replace(/,/g, '')) : 0;
+            let reduce  = $('#reduce').val() ? Number($('#reduce').val().replace(/,/g, '')) : 0;
+            total_sale_wage = debt_wage + (total_order.wage - total_order.wage * sampling_discount / 100 - reduce) - return_total.wage -  pay_total_wage;
             total_sale_wage = Math.round(total_sale_wage * 1000000) / 1000000;
             $('#total_sale_exchange_g10').html(total_sale_exchange_g10.toLocaleString('en-US'));
             $('#total_sale_wage').html(total_sale_wage.toLocaleString('en-US'));
@@ -1241,7 +1243,7 @@
 						* (detail.discount_machining_fee?detail.discount_machining_fee:0)/100;
                 });
                 total_wage_need_pay = total_wage_need_pay - reduce - return_total_wage;
-                if(pay_total_wage < total_wage_need_pay){
+                if(pay_total_wage < total_wage_need_pay && !$('#reason_pay_not_enough').val()){
                     valid = false;
                     $('#pay_total_wage').addClass('invalid');
                     swal("Thông báo", "Chưa thu tiền công.\nBạn cần thu đủ " + total_wage_need_pay.toLocaleString('en-US') +"(đ) tiền công, hoặc nhập Lý do chưa thu hết công nợ cũ/tiền công.", "warning");
@@ -1312,7 +1314,7 @@
 							wage: Number($('#wage').val() ? $('#wage').val() : 0), // tiền công trong bảng công nợ
                             exchange_g10: Number($('#exchange_g10').val() ? $('#exchange_g10').val().replace(/,/g, '') : 0), // Q10 trong bảng công nợ
 							saler_id: Number('{{CRUDBooster::myId()}}'),
-							order_date: moment($('#order_date').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+							order_date: moment($('#order_date').val(), 'DD/MM/YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
 							order_no: null,
                             gold_age_1: Number($('#gold_age_1').val() ? $('#gold_age_1').val().replace(/,/g, '') : 0),
                             gold_age_2: Number($('#gold_age_2').val() ? $('#gold_age_2').val().replace(/,/g, '') : 0),

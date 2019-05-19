@@ -34,10 +34,10 @@ class AdminCmsUsersController extends CBExtendController {
 		$this->form[] = array("label"=>"Tên","name"=>"name",'required'=>true,'validation'=>'required|alpha_spaces|min:3','width'=>'col-sm-4',"help"=>"Tên hiển thị");
 		$this->form[] = array("label"=>"Email","name"=>"email",'required'=>true,'type'=>'email','validation'=>'required|email|unique:cms_users,email,'.CRUDBooster::getCurrentId(),'width'=>'col-sm-4',"help"=>"Dùng để đăng nhập");
         $this->form[] = array("label"=>"Mã nhân viên","name"=>"employee_code",'width'=>'col-sm-4',"help"=>"Mã nhân viên sẽ xuất hiện trong báo cáo bán hàng");
-        $this->form[] = array('label'=>'Kho hàng','name'=>'stock_id','type'=>'select2','width'=>'col-sm-4','datatable'=>'gold_stocks,name');
+        $this->form[] = array('label'=>'Kho hàng','name'=>'stock_id','type'=>'select2','width'=>'col-sm-4','datatable'=>'gold_stocks,name',"help"=>"Bạn có thể chọn nhiều kho");
 //        $this->form[] = ['label'=>'Kho hàng','type'=>'select2','datatable'=>'gold_stocks,name','relationship_table'=>'gold_stocks_cms_users'];
         $this->form[] = array("label"=>"Ảnh đại diện","name"=>"photo","type"=>"upload","help"=>"Kích thước được đề xuất là 200x200 px",'required'=>true,'validation'=>'required|image|max:1000','resize_width'=>200,'resize_height'=>200,'width'=>'col-sm-4');
-		$this->form[] = array("label"=>"Vài trò","name"=>"id_cms_privileges","type"=>"select","datatable"=>"cms_privileges,name",'required'=>true,'width'=>'col-sm-4');
+		$this->form[] = array("label"=>"Vài trò","name"=>"id_cms_privileges","type"=>"select","datatable"=>"cms_privileges,name",'datatable_where'=>'id != 1','required'=>true,'width'=>'col-sm-4');
 		$this->form[] = array("label"=>"Mật khẩu","name"=>"password","type"=>"password",'width'=>'col-sm-4',"help"=>"Vui lòng để trống nếu bạn không muốn đổi mật khẩu");
 		# END FORM DO NOT REMOVE THIS LINE
 				

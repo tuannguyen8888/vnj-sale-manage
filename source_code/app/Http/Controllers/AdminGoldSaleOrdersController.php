@@ -459,7 +459,7 @@
             $id = intval($para['id']);
             $filename = 'DH-'.time();
             $database = \Config::get('database.connections.mysql');
-            $input = base_path().'/app/Reports/report_detail.jasper';
+            $input = base_path().'/app/Reports/report_detail_4_pdf.jasper';
             $output = public_path() . '/output_reports/' . $filename;
             $parameter = ['id'=>$id];
             Log::debug('$input = ' . $input);
@@ -487,7 +487,7 @@
             $id = intval($para['id']);
             $filename = 'DH-'.time();
             $database = \Config::get('database.connections.mysql');
-            $input = base_path().'/app/Reports/report_detail.jasper';
+            $input = base_path().'/app/Reports/report_detail_4_xlsx.jasper';
             $output = public_path() . '/output_reports/' . $filename;
             $parameter = ['id'=>$id];
             Log::debug('$input = ' . $input);

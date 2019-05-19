@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Log;
 			$this->button_detail = false;
 			$this->button_show = false;
 			$this->button_filter = true;
-			$this->button_import = true;
+			$this->button_import = (CRUDBooster::myPrivilegeId() == 1 || CRUDBooster::myPrivilegeId() == 5)? true: false;
 			$this->button_export = true;
 			$this->table = "gold_liabilities";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
@@ -244,7 +244,12 @@ use Illuminate\Support\Facades\Log;
 	        //Your code here
             if(CRUDBooster::myPrivilegeId() == 2)// Nhân viên bán hàng
             {
-                $query->whereRaw("trim(upper(gold_liabilities.saler_name)) like '".CRUDBooster::myName()."'");
+                $query->leftJoin('gold_import_liabilities as IL', 'IL.id', '=', 'gold_liabilities.import_liabilities_id')
+                    ->whereRaw('IL.deleted_at is null')
+                    ->whereRaw("trim(upper(gold_liabilities.saler_name)) like '".CRUDBooster::myName()."'");
+            }else{
+                $query->leftJoin('gold_import_liabilities as IL', 'IL.id', '=', 'gold_liabilities.import_liabilities_id')
+                    ->whereRaw('IL.deleted_at is null');
             }
 	    }
 
@@ -493,6 +498,10 @@ use Illuminate\Support\Facades\Log;
             Cache::put('success_'.$file_md5, 0, 60*30); // cache trong 30 phút
             // insert new `gold_import_liabilities`
             $new_import_row = ['import_date'=>date('Y-m-d H:i:s')];
+            DB::table('gold_import_liabilities')
+                ->where('id','>', 0)
+                ->where('import_date','<', date('Y-m-d H:i:s'))
+                ->update(['deleted_at' => date('Y-m-d H:i:s')]);
             $import_liabilities_id = DB::table('gold_import_liabilities')->insertGetId($new_import_row);
             //
 

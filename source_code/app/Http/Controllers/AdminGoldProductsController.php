@@ -36,7 +36,7 @@
 			$this->button_detail = true;
 			$this->button_show = false;
 			$this->button_filter = true;
-			$this->button_import = true;
+			$this->button_import = (CRUDBooster::myPrivilegeId() == 1 || CRUDBooster::myPrivilegeId() == 5)? true: false;;
 			$this->button_export = true;
 			$this->table = "gold_products";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE

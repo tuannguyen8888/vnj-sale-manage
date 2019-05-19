@@ -23,6 +23,7 @@
     SOD.sort_no,
     SOD.product_id,
     S.name as stock_name,
+    PG.name as product_group_name,
     P.bar_code,
     P.product_name,
     P.product_code,
@@ -36,6 +37,7 @@
 FROM gold_sale_order_details as SOD
 LEFT JOIN gold_products as P ON SOD.product_id = P.id
 LEFT JOIN gold_stocks as S ON P.stock_id = S.id
+LEFT JOIN gold_product_groups as PG ON P.product_group_id = PG.id
 WHERE SOD.order_id = $P{order_id} 
 ORDER BY group_by, P.product_code]]>
 		</queryString>
@@ -58,6 +60,10 @@ ORDER BY group_by, P.product_code]]>
 		<field name="stock_name" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="stock_name"/>
 			<property name="com.jaspersoft.studio.field.tree.path" value="gold_stocks"/>
+		</field>
+		<field name="product_group_name" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="product_group_name"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="gold_product_groups"/>
 		</field>
 		<field name="bar_code" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="bar_code"/>
@@ -565,7 +571,7 @@ WHERE SO.id = $P{id}]]>
 									<font fontName="Arial"/>
 									<paragraph leftIndent="3" rightIndent="2"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{stock_name}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{product_group_name}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -829,7 +835,7 @@ WHERE SO.id = $P{id}]]>
 					<font fontName="Arial" isBold="true"/>
 					<paragraph leftIndent="5" rightIndent="5" spacingBefore="5" spacingAfter="5"/>
 				</textElement>
-				<text><![CDATA[Kho]]></text>
+				<text><![CDATA[Nhóm hàng]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="80" y="26" width="90" height="30" uuid="6e540b03-4104-47c1-96bd-4c44838f169c">
