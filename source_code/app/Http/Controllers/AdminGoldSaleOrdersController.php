@@ -332,7 +332,7 @@
             }
 
             $order_date_str = $new_order['order_date'];
-            $order_date = DateTime::createFromFormat('Y-m-d', $order_date_str);
+            $order_date = DateTime::createFromFormat('Y-m-d H:i:s', $order_date_str);
 
             // get new order no
             $last_order = DB::table('gold_sale_orders as SO')

@@ -545,7 +545,7 @@
                                         $('#debt_date').val(null);
                                         $('#days_diff').val(null);
                                     }
-                                    $('#exchange_g10').val(data.debt.exchange_g10_credit - data.debt.exchange_g10_debit);
+                                    $('#exchange_g10').val(Math.round(1000 * (data.debt.exchange_g10_credit - data.debt.exchange_g10_debit))/1000);
                                     $('#wage').val(data.debt.wage_credit - data.debt.wage_debit);
                                     calcTotalSaleOrder();
                                 }

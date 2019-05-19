@@ -112,7 +112,7 @@
 								</div>
 								<label class="control-label col-sm-2 text-right">Giảm trừ (đ)</label>
 								<div class="col-sm-2">
-									<input type="text" name="reduce" id="reduce" class="form-control money" required>
+									<input type="text" name="reduce" id="reduce" class="form-control money" onchange="calcTotalSaleOrder()" required>
 								</div>
 							</div>
 						</div>
@@ -603,7 +603,7 @@
                                         $('#debt_date').val(null);
                                         $('#days_diff').val(null);
 									}
-									$('#exchange_g10').val(data.debt.exchange_g10_credit - data.debt.exchange_g10_debit);
+									$('#exchange_g10').val(Math.round(1000 * (data.debt.exchange_g10_credit - data.debt.exchange_g10_debit))/1000);
                                     $('#wage').val(data.debt.wage_credit - data.debt.wage_debit);
                                     calcTotalSaleOrder();
                                 }
