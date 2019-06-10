@@ -334,6 +334,7 @@
 							<button id="save_button" class="btn btn-success" onclick="submit()"><i class="fa fa-save"></i> Lưu</button>
 						@endif
 						<a id="print_invoice" style="display: none;cursor: pointer;" onclick="printInvoice()" class="btn btn-info"><i class="fa fa-print"></i> In hóa đơn</a>
+						<a id="print_report_detail" style="display: none;cursor: pointer;" onclick="printReportDetail()" class="btn btn-primary"><i class="fa fa-print"></i> In Bảng kê chi tiết</a>
 					</div>
 				</div>
 			</div>
@@ -505,6 +506,7 @@
         };
         total_sale_exchange_g10 = 0;
         total_sale_wage = 0;
+        invalid_order = false;// đánh dấu đơn hàng vi phạm
         lastTimeScanBarCode = moment();
         $(function(){
             $(document).scannerDetection({
@@ -518,6 +520,19 @@
                 },
                 onError: function( string, qty) {}
             });
+            sessionTimeout = Number('{{Config::get('session.lifetime') * 60)}}');
+			setTimeout(function () {
+                swal(
+                    	{
+							title: "Thông báo",
+							text: "Phiên đăng nhập của bạn đã hết hạn, vui lòng đăng nhập lại.",
+							type: "danger"
+						},
+						function() {
+                    	    window.location = '{{CRUDBooster::adminPath()}}/logout';
+                    	}
+					);
+            }, sessionTimeout * 1000);
             let todayStr = moment().format('DD/MM/YYYY');
             if($('#order_date').val() == ''){
                 $('#order_date').val(moment().format('DD/MM/YYYY HH:mm:ss'));
@@ -583,6 +598,7 @@
                         customer_code: customer_code,
                         _token: '{{ csrf_token() }}'
                     },
+                    dataType: "json",
                     async: true,
                     success: function (data) {
                         if (data){
@@ -668,21 +684,23 @@
 			}
             hideModalcustomer_id();
         }
-
+		productFinding = false;
         function findProduct(event) {
             if(event == null || event.keyCode == 13) {
-                if(moment().diff(lastTimeScanBarCode, 's') >= 1) {
+                if(!productFinding && moment().diff(lastTimeScanBarCode, 's') >= 1) {
                     lastTimeScanBarCode = moment();
+                    productFinding = true;
                     let bar_code = $('#bar_code').val();
                     let added = false;
                     order_details.forEach(function (detail, index) {
                         if (detail.bar_code == bar_code) {
                             added = true;
                             $('#bar_code').val(null);
-                            swal("Thông báo", "Sản phẩm [" + bar_code + "] đã được thêm.", "info");
+                            // swal("Thông báo", "Sản phẩm [" + bar_code + "] đã được thêm.", "info");
                         }
                     });
                     if (bar_code && !added) {
+                        $('.loading').show();
                         $.ajax({
                             method: "GET",
                             url: '{{Route("AdminGoldProductsControllerGetSearchProduct")}}',
@@ -690,6 +708,7 @@
                                 bar_code: bar_code,
                                 _token: '{{ csrf_token() }}'
                             },
+                            dataType: "json",
                             async: true,
                             success: function (data) {
                                 if (data && data.product) {
@@ -697,71 +716,86 @@
                                         $('#bar_code').val(null);
                                         swal("Thông báo", "Sản phẩm [" + bar_code + "] đã bán.", "warning");
                                     } else {
-                                        data.product.no = order_details.length + 1;
-                                        switch (data.product.product_code.substr(0,2).toUpperCase()) {
-											case 'V_': //hàng khác
-                                                data.product.age = Number($('#gold_age_3').val()?$('#gold_age_3').val().replace(/,/g, ''):0);
-											    break;
-											case 'B_': //đồ bộng
-                                                data.product.age = Number($('#gold_age_2').val()?$('#gold_age_2').val().replace(/,/g, ''):0);
-											    break;
-											default: //đồ đúc
-                                                data.product.age = Number($('#gold_age_1').val()?$('#gold_age_1').val().replace(/,/g, ''):0);
-                                        }
-                                        data.product.exchange_g10 = data.product.qty * data.product.gold_weight * data.product.age / 100;
-                                        data.product.discount_machining_fee = $('#sampling_discount').val()?Number($('#sampling_discount').val().replace(/,/g, '')):0;
-                                        order_details.push(data.product);
-                                        addNewSaleOrderDetail(data.product);
-                                        $('#bar_code').val(null);
-                                        // table_order_details.data = order_details;
-                                        // console.log('order_details = ', order_details);
-                                        // console.log('table_order_details.data = ', table_order_details.data);
-                                        // console.log('table_order_details = ', table_order_details);
-                                        // table_order_details.fnDraw();
+                                        let tmp_added = false;
+                                        order_details.forEach(function (detail, index) {
+                                            if (detail.bar_code == data.product.product_code) {
+                                                tmp_added = true;
+                                            }
+                                        });
+                                        if(tmp_added) {
+                                            data.product.no = order_details ? order_details.length + 1 : 1;
+                                            switch (data.product.product_code.toUpperCase().trim().substr(0, 2)) {
+                                                case 'V_': //hàng khác
+                                                    data.product.age = $('#gold_age_3').val() ? Number($('#gold_age_3').val().replace(/,/g, '')) : 0;
+                                                    break;
+                                                case 'B_': //đồ bộng
+                                                    data.product.age = $('#gold_age_2').val() ? Number($('#gold_age_2').val().replace(/,/g, '')) : 0;
+                                                    break;
+                                                default: //đồ đúc
+                                                    data.product.age = $('#gold_age_1').val() ? Number($('#gold_age_1').val().replace(/,/g, '')) : 0;
+                                            }
+                                            data.product.exchange_g10 = data.product.gold_weight * data.product.age / 100; // data.product.qty *
+                                            data.product.discount_machining_fee = $('#sampling_discount').val() ? Number($('#sampling_discount').val().replace(/,/g, '')) : 0;
+                                            order_details.push(data.product);
+                                            addNewSaleOrderDetail(data.product);
+                                            $('#bar_code').val(null);
+                                            // table_order_details.data = order_details;
+                                            // console.log('order_details = ', order_details);
+                                            // console.log('table_order_details.data = ', table_order_details.data);
+                                            // console.log('table_order_details = ', table_order_details);
+                                            // table_order_details.fnDraw();
 
-                                        calcTotalOfSaleOrderDetails();
-                                        calcTotalSaleOrder();
+                                            calcTotalOfSaleOrderDetails();
+                                            calcTotalSaleOrder();
+                                        }
                                     }
                                 } else {
                                     $('#bar_code').val(null);
                                     swal("Thông báo", "Không tìm thấy mã " + bar_code, "warning");
                                 }
-                                //$('#loading').hide();
+                                productFinding = false;
+                                $('.loading').hide();
                             },
                             error: function (request, status, error) {
-                                //$('.loading').hide();
+                                $('.loading').hide();
+								console.log('Lỗi khi tìm sản phẩm ', [request, status, error]);
                                 swal("Thông báo", "Có lỗi xãy ra khi tải dữ liệu, vui lòng thử lại.", "warning");
+                                productFinding = false;
                             }
                         });
-                    }
+                    } else {
+                        productFinding = false;
+					}
                 }
             }
         }
         function saleOrderHeadChange() {
-            let sampling_discount = Number($('#sampling_discount').val()?$('#sampling_discount').val().replace(/,/g, ''):0);
-            let gold_age_1 = Number($('#gold_age_1').val()?$('#gold_age_1').val().replace(/,/g, ''):0);
-            let gold_age_2 = Number($('#gold_age_2').val()?$('#gold_age_2').val().replace(/,/g, ''):0);
-            let gold_age_3 = Number($('#gold_age_3').val()?$('#gold_age_3').val().replace(/,/g, ''):0);
+            let sampling_discount = $('#sampling_discount').val()?Number($('#sampling_discount').val().replace(/,/g, '')):0;
+            let gold_age_1 = $('#gold_age_1').val()?Number($('#gold_age_1').val().replace(/,/g, '')):0;
+            let gold_age_2 = $('#gold_age_2').val()?Number($('#gold_age_2').val().replace(/,/g, '')):0;
+            let gold_age_3 = $('#gold_age_3').val()?Number($('#gold_age_3').val().replace(/,/g, '')):0;
             order_details.forEach(function (detail, index) {
 				detail.discount_machining_fee = sampling_discount;
 				$(`#discount_machining_fee_${detail.id}`).html(detail.discount_machining_fee?detail.discount_machining_fee.toLocaleString('en-US') + ' %':'');
-                switch (detail.product_code.substr(0,2).toUpperCase()) {
+                switch (detail.product_code.toUpperCase().trim().substr(0,2)) {
                     case 'V_': //hàng khác
                         detail.age = gold_age_3;
-                        detail.exchange_g10 = detail.qty * detail.gold_weight * detail.age / 100;
+                        detail.exchange_g10 = detail.gold_weight * detail.age / 100; // detail.qty *
                         break;
                     case 'B_': //đồ bộng
                         detail.age = gold_age_2;
-                        detail.exchange_g10 = detail.qty * detail.gold_weight * detail.age / 100;
+                        detail.exchange_g10 = detail.gold_weight * detail.age / 100; // detail.qty *
                         break;
                     default: //đồ đúc
                         detail.age = gold_age_1;
-                        detail.exchange_g10 = detail.qty * detail.gold_weight * detail.age / 100;
+                        detail.exchange_g10 = detail.gold_weight * detail.age / 100; // detail.qty *
                 }
                 $(`#age_${detail.id}`).html(detail.age?detail.age.toLocaleString('en-US') + ' %':'');
                 $(`#exchange_g10_${detail.id}`).html(detail.exchange_g10?detail.exchange_g10.toLocaleString('en-US'):'');
             })
             valid_actual_weight();
+            calcTotalOfSaleOrderDetails();
+            calcTotalSaleOrder();
         }
         function calcTotalOfSaleOrderDetails() {
             total_order = {
@@ -897,12 +931,12 @@
                 // swal("Thông báo", "Bạn không thể thêm sản phẩm sau khi đã lưu đơn hàng, hãy tạo đơn hàng mới.", "warning");
                 return;
             }
-            let index = order_pays.length;
-            order_pays.push({});
-            let html = `<tr id="order_pay_index_${index}">
-							<th class="text-center"><a onclick="removePayDetail(${index})" class="text-red" style="cursor: pointer;"><i class="fa fa-remove"></i></a></th>
+            let tmp_id = - order_pays.length;
+            order_pays.push({id: tmp_id});
+            let html = `<tr id="order_pay_index_${tmp_id}">
+							<th class="text-center"><a onclick="removePayDetail(${tmp_id})" class="text-red" style="cursor: pointer;"><i class="fa fa-remove"></i></a></th>
 							<th class="no-padding">
-								<select id="pay${index}_pay_method" class="form-control" onchange="pay_method_change(${index})">
+								<select id="pay${tmp_id}_pay_method" class="form-control" onchange="pay_method_change(${tmp_id})">
 									<option value=""></option>
 									<option value="1">Thảo</option>
 									<option value="2">Dẻ</option>
@@ -911,34 +945,44 @@
 									<option value="5">Bộng</option>
 								</select>
 							</th>
-							<th class="no-padding"><input id="pay${index}_description" onchange="pays_change(${index})" type="text" class="form-control"></th>
-							<th class="no-padding"><input id="pay${index}_qty" type="text" onchange="pays_change(${index})" class="form-control money"></th>
-							<th class="no-padding"><input id="pay${index}_total_weight" onchange="pays_change(${index})" type="text" class="form-control money"></th>
-							<th class="no-padding"><input id="pay${index}_gem_weight" onchange="pays_change(${index})" type="text" class="form-control money"></th>
+							<th class="no-padding"><input id="pay${tmp_id}_description" onchange="pays_change(${tmp_id})" type="text" class="form-control"></th>
+							<th class="no-padding"><input id="pay${tmp_id}_qty" type="text" onchange="pays_change(${tmp_id})" class="form-control money"></th>
+							<th class="no-padding"><input id="pay${tmp_id}_total_weight" onchange="pays_change(${tmp_id})" type="text" class="form-control money"></th>
+							<th class="no-padding"><input id="pay${tmp_id}_gem_weight" onchange="pays_change(${tmp_id})" type="text" class="form-control money"></th>
 							<th class="no-padding">
-								<input id="pay${index}_gold_weight" type="text" onchange="pays_change(${index})" class="form-control money" placeholder="Tổng vàng" style="display: none;">
-								<input id="pay${index}_money" type="text" onchange="pays_change(${index})" class="form-control money" placeholder="Tiền mặt" style="display: none;">
+								<input id="pay${tmp_id}_gold_weight" type="text" onchange="pays_change(${tmp_id})" class="form-control money" placeholder="Tổng vàng" style="display: none;">
+								<input id="pay${tmp_id}_money" type="text" onchange="pays_change(${tmp_id})" class="form-control money" placeholder="Tiền mặt" style="display: none;">
 							</th>
 							<th class="no-padding">
-								<input id="pay${index}_gold_age" type="text" onchange="pays_change(${index})" class="form-control money" placeholder="Tuổi vàng" style="display: none;">
-								<input id="pay${index}_converted_price" type="text" onchange="pays_change(${index})" class="form-control money" placeholder="Giá quy đổi" style="display: none;">
+								<input id="pay${tmp_id}_gold_age" type="text" onchange="pays_change(${tmp_id})" class="form-control money" placeholder="Tuổi vàng" style="display: none;">
+								<input id="pay${tmp_id}_converted_price" type="text" onchange="pays_change(${tmp_id})" class="form-control money" placeholder="Giá quy đổi" style="display: none;">
 							</th>
-							<th class="text-right" id="pay${index}_exchange_g10"></th>
+							<th class="text-right" id="pay${tmp_id}_exchange_g10"></th>
 							<th></th>
 						</tr>`;
             $('#table_pays tbody').append(html);
-            let html_id = "#order_pay_index_" + index + " .money";
+            let html_id = "#order_pay_index_" + tmp_id + " .money";
             setTimeout(function () {
                 // $(html_id).autoNumeric('init', optionNumberInput);
                 AutoNumeric.multiple(html_id, optionNumberInput);
             },100);
         }
-        function removePayDetail(removeIndex) {
+        function removePayDetail(removeId) {
             if(readOnlyAll){
                 // swal("Thông báo", "Bạn không thể thêm sản phẩm sau khi đã lưu đơn hàng, hãy tạo đơn hàng mới.", "warning");
                 return;
             }
-			$('#order_pay_index_'+removeIndex).remove();
+
+            let removePay = null;
+            let removeIndex = -1;
+            order_pays.forEach(function (pay, index) {
+                if(pay.id == removeId) {
+                    removePay = detail;
+                    removeIndex = index;
+                }
+            });
+
+			$('#order_pay_index_'+removeId).remove();
 			order_pays.splice(removeIndex, 1);
             calcTotalOfPays();
             calcTotalSaleOrder();
@@ -1026,6 +1070,7 @@
         function pays_change(index) {
 			let payDetail = order_pays[index];
             payDetail.qty = Number($(`#pay${index}_qty`).val()?$(`#pay${index}_qty`).val().replace(/,/g, ''):0);
+            payDetail.description = $(`#pay${index}_description`).val();
             payDetail.total_weight = Number($(`#pay${index}_total_weight`).val()?$(`#pay${index}_total_weight`).val().replace(/,/g, ''):0);
             payDetail.gem_weight = Number($(`#pay${index}_gem_weight`).val()?$(`#pay${index}_gem_weight`).val().replace(/,/g, ''):0);
             // payDetail.gold_weight = Number($(`#pay${index}_gold_weight`).val()?$(`#pay${index}_gold_weight`).val().replace(/,/g, ''):0);
@@ -1142,10 +1187,10 @@
                 valid = false;
                 $('#actual_weight').addClass('invalid');
             }
-            if(order_pays.length > 0 && !$('#pay_total_wage').val()){
-                valid = false;
-                $('#pay_total_wage').addClass('invalid');
-            }
+            // if(order_pays.length > 0 && !$('#pay_total_wage').val()){
+            //     valid = false;
+            //     $('#pay_total_wage').addClass('invalid');
+            // } validate ở dưới
             if(!$('#pay_date').val()){
                 valid = false;
                 $('#pay_date').addClass('invalid');
@@ -1235,6 +1280,7 @@
                 swal("Thông báo", "Dữ liệu chưa được nhập đầy đủ, vui lòng kiểm tra lại.", "warning");
             }else{
                 let total_wage_need_pay = 0;
+                let debt_wage = $('#wage').val() ? Number($('#wage').val().replace(/,/g, '')) : 0;
                 let reduce = $('#reduce').val() ? Number($('#reduce').val().replace(/,/g, '')) : 0;
                 let pay_total_wage = $('#pay_total_wage').val() ? Number($('#pay_total_wage').val().replace(/,/g, '')) : 0;
                 order_details.forEach(function (detail, index) {
@@ -1242,12 +1288,29 @@
 						- (detail.retail_machining_fee?detail.retail_machining_fee:0)
 						* (detail.discount_machining_fee?detail.discount_machining_fee:0)/100;
                 });
-                total_wage_need_pay = total_wage_need_pay - reduce - return_total_wage;
-                if(pay_total_wage < total_wage_need_pay && !$('#reason_pay_not_enough').val()){
-                    valid = false;
-                    $('#pay_total_wage').addClass('invalid');
-                    swal("Thông báo", "Chưa thu tiền công.\nBạn cần thu đủ " + total_wage_need_pay.toLocaleString('en-US') +"(đ) tiền công, hoặc nhập Lý do chưa thu hết công nợ cũ/tiền công.", "warning");
-				}else {
+                total_wage_need_pay = total_wage_need_pay + debt_wage - reduce - return_total_wage;
+                invalid_order = false;
+                let total_debt_exchange_q10_need_pay = $('#exchange_g10').val() ? Number($('#exchange_g10').val().replace(/,/g, '')) : 0;
+                let total_exchange_q10_will_pay = return_total.exchange_g10 + pay_total_exchange_g10;
+                if(pay_total_wage < total_wage_need_pay){
+                    if(!$('#reason_pay_not_enough').val()) {
+                        valid = false;
+                        $('#pay_total_wage').addClass('invalid');
+                        swal("Thông báo", "Chưa thu tiền công.\nBạn cần thu đủ " + total_wage_need_pay.toLocaleString('en-US') + "(đ) tiền công, hoặc nhập Lý do chưa thu hết công nợ cũ/tiền công.", "warning");
+                    } else {
+                        invalid_order =  true;
+                        valid = valid && valid_actual_weight(true);
+                    }
+                } else if(total_debt_exchange_q10_need_pay > total_exchange_q10_will_pay){
+                    if(!$('#reason_pay_not_enough').val()) {
+                        valid = false;
+                        swal("Thông báo", "Chưa thanh toán hết nợ cũ.\nBạn cần thu đủ " + total_debt_exchange_q10_need_pay.toLocaleString('en-US') + "(chỉ) nợ cũ, hoặc nhập Lý do chưa thu hết công nợ cũ/tiền công.", "warning");
+                    } else {
+                        invalid_order =  true;
+                        valid = valid && valid_actual_weight(true);
+                    }
+                }
+				else {
                     valid = valid && valid_actual_weight(true);
                 }
 			}
@@ -1298,6 +1361,7 @@
             return valid;
         }
         function submit() {
+            $('#save_button').hide();
 			if(validate()){
                 $('.loading').show();
                 //$('#form input').attr('readonly', true);
@@ -1308,6 +1372,7 @@
                     data: {
                         order: {
                             id: null,
+                            order_type: invalid_order?3:2, // 3 = đơn hàng vi phạm, 2=đơn hàng nhanh
 							customer_id: $('#customer_id').val() ? Number($('#customer_id').val()) : null,
 							debt_date: $('#debt_date').val() ? moment($('#debt_date').val(), 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
 							days_diff: Number($('#days_diff').val() ? $('#days_diff').val() : 0),
@@ -1321,7 +1386,7 @@
                             gold_age_3: Number($('#gold_age_3').val() ? $('#gold_age_3').val().replace(/,/g, '') : 0),
                             sampling_discount: Number($('#sampling_discount').val() ? $('#sampling_discount').val().replace(/,/g, '') : 0),
 							pay_date: moment($('#pay_date').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
-                            pay_total_wage: Number($('#pay_total_wage').val() ? $('#sampling_discount').val().replace(/,/g, '') : 0),
+                            pay_total_wage: Number($('#pay_total_wage').val() ? $('#pay_total_wage').val().replace(/,/g, '') : 0),
 							actual_weight: Number($('#actual_weight').val() ? $('#actual_weight').val().replace(/,/g, '') : 0),
 							reduce: Number($('#reduce').val() ? $('#reduce').val().replace(/,/g, '') : 0),
                             total_exchange_g10: total_sale_exchange_g10, // tổng vàng quy 10
@@ -1341,12 +1406,14 @@
 						order_pays: order_pays,
                         _token: '{{ csrf_token() }}'
                     },
+                    dataType: "json",
                     async: true,
                     success: function (data) {
                         if (data) {
                             readOnlyAll = true;
                             $('#order_no').val(data.order_no);
                             $('#print_invoice').show();
+                            $('#print_report_detail').show();
                             $('#save_button').hide();
                             $('#form input').attr('readonly', true);
                             $('#form textarea').attr('readonly', true);
@@ -1361,9 +1428,14 @@
                     },
                     error: function (request, status, error) {
                         $('.loading').hide();
+                        console.log('PostAdd status = ', status);
+                        console.log('PostAdd error = ', error);
                         swal("Thông báo", "Có lỗi xãy ra khi lưu dữ liệu, vui lòng thử lại.", "error");
+                        $('#save_button').show();
                     }
                 });
+			} else {
+                $('#save_button').show();
 			}
         }
         function popupWindow(url,windowName) {
@@ -1375,6 +1447,13 @@
                 popupWindow("{{action('AdminGoldSaleOrdersController@getPrintInvoice')}}?id=" + order_id,"print");
             }else{
                 alert("Bạn không thể in hóa đơn nếu chưa lưu đơn hàng!");
+            }
+        }
+        function printReportDetail() {
+            if(order_id) {
+                popupWindow("{{action('AdminGoldSaleOrdersController@getPrintReportDetail')}}?id=" + order_id,"print");
+            }else{
+                alert("Bạn không thể in bảng kê chi tiết nếu chưa lưu đơn hàng!");
             }
         }
 	</script>

@@ -25,7 +25,7 @@
 			$this->button_action_style = "button_icon_text";
 			$this->button_add = true;
 			$this->button_edit = false;
-			$this->button_delete = false;
+			$this->button_delete = true;
 			$this->button_detail = false;
 			$this->button_show = false;
 			$this->button_filter = true;
@@ -47,7 +47,7 @@
 
             // Nguen add new for search
             $this->search_form = [];
-            $this->search_form[] = ["label"=>"Loại đơn hàng", "name"=>"order_type","type"=>"select","width"=>"col-md-3", 'dataenum'=>"2|<lable class='label label-info'>ĐH chuẩn</lable>;1|<lable class='label label-success'>ĐH nhanh</lable>"];
+            $this->search_form[] = ["label"=>"Loại đơn hàng", "name"=>"order_type","type"=>"select","width"=>"col-md-3", 'dataenum'=>"3|<lable class='label label-danger'>ĐH vi phạm</lable>;2|<lable class='label label-info'>ĐH chuẩn</lable>;1|<lable class='label label-success'>ĐH nhanh</lable>"];
             if(CRUDBooster::myPrivilegeId() == 2) {
                 $this->search_form[] = ["label" => "Khách hàng", "name" => "customer_id", "type" => "select2", "width" => "col-md-3", 'datatable' => 'gold_customers,name', 'datatable_where' => 'deleted_at is null and saler_id = ' . CRUDBooster::myId(), 'datatable_format' => "IFNULL(code,tmp_code),' - ',name,' - ',IFNULL(phone,'')"];
             }else{
@@ -316,89 +316,98 @@
                 CRUDBooster::insertLog(trans('crudbooster.log_try_add_save',['name'=>Request::input($this->title_field),'module'=>CRUDBooster::getCurrentModule()->name ]));
                 CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
             }
-            $para = Request::all();
-            Log::debug('$para = '.Json::encode($para));
-            $new_order = $para['order'];
-            $order_details = $para['order_details'];
-            $order_returns = $para['order_returns'];
-            $order_pays = $para['order_pays'];
+            DB::beginTransaction();
+            try {
+                $para = Request::all();
+                Log::debug('$para = ' . Json::encode($para));
+                $new_order = $para['order'];
+                $order_details = $para['order_details'];
+                $order_returns = $para['order_returns'];
+                $order_pays = $para['order_pays'];
 
-            if(!$new_order['customer_id']){
-                $new_customer = $para['customer'];
-                $new_customer['created_at'] = date('Y-m-d H:i:s');
-                $new_customer['created_by'] = CRUDBooster::myId();
-                $customer_id = DB::table('gold_customers')->insertGetId($new_customer);
-                $new_order['customer_id'] = $customer_id;
-            }
-
-            $order_date_str = $new_order['order_date'];
-            $order_date = DateTime::createFromFormat('Y-m-d H:i:s', $order_date_str);
-
-            // get new order no
-            $last_order = DB::table('gold_sale_orders as SO')
-                ->whereRaw('SO.deleted_at is null')
-                ->where('SO.order_date','>=', $order_date_str.' 00:00:00')
-                ->where('SO.order_date','<=', $order_date_str.' 23:59:59')
-                ->orderBy('SO.order_no', 'desc')
-                ->first();
-            $new_order_no = '';
-            if($last_order){
-                $old_no = intval(explode('-', $last_order->order_no)[1]);
-                $new_order_no = '000' . ($old_no + 1);
-                $new_order_no = substr($new_order_no,strlen($new_order_no)-3,3);
-                $new_order_no = 'DH'.$order_date->format('ymd').'-'.$new_order_no;
-            }else{
-                $new_order_no = 'DH'.$order_date->format('ymd').'-001';
-            }
-            $new_order['order_no'] = $new_order_no;
-            $created_at = date('Y-m-d H:i:s');
-            $new_order['created_at'] = $created_at;
-            $new_order['created_by'] = CRUDBooster::myId();
-            unset($new_order['id']);
-            $order_id = DB::table('gold_sale_orders')->insertGetId($new_order);
-            Log::debug('$order_id = '.$order_id);
-
-            if($order_details && count($order_details)) {
-                $new_sale_order_details = [];
-                foreach ($order_details as $detail) {
-                    $new_detail = [
-                        'order_id' => $order_id,
-                        'sort_no' => $detail['no'],
-                        'product_id' => $detail['id'],
-                        'age' => $detail['age'] ? $detail['age'] : 0,
-                        'discount_wage' => $detail['discount_machining_fee'] ? $detail['discount_machining_fee'] : 0
-                    ];
-                    array_push($new_sale_order_details, $new_detail);
+                if (!$new_order['customer_id']) {
+                    $new_customer = $para['customer'];
+                    $new_customer['created_at'] = date('Y-m-d H:i:s');
+                    $new_customer['created_by'] = CRUDBooster::myId();
+                    $customer_id = DB::table('gold_customers')->insertGetId($new_customer);
+                    $new_order['customer_id'] = $customer_id;
                 }
-                DB::table('gold_sale_order_details')->insert($new_sale_order_details);
-                foreach ($order_details as $detail) {
-                    DB::table('gold_products')->where('id', $detail['id'])->update(['qty' => 0, 'status' => 0]);
-                }
-            }
 
-            $new_order_returns = [];
-            if($order_returns && count($order_returns)) {
-                foreach ($order_returns as $return) {
-                    $new_return = arrayCopy($return);
-                    unset($new_return['id']);
-                    $new_return['order_id'] = $order_id;
-                    Log::debug('$return = ' . Json::encode($new_return));
-                    array_push($new_order_returns, $new_return);
+                $order_date_str = $new_order['order_date'];
+                $order_date = DateTime::createFromFormat('Y-m-d H:i:s', $order_date_str);
+
+                // get new order no
+                $last_order = DB::table('gold_sale_orders as SO')
+                    ->whereRaw('SO.deleted_at is null')
+                    ->where('SO.order_date', '>=', $order_date->format('Y-m-d') . ' 00:00:00')
+                    ->where('SO.order_date', '<=', $order_date->format('Y-m-d') . ' 23:59:59')
+                    ->orderBy('SO.order_no', 'desc')
+                    ->first();
+                $new_order_no = '';
+                if ($last_order) {
+                    $old_no = intval(explode('-', $last_order->order_no)[1]);
+                    $new_order_no = '000' . ($old_no + 1);
+                    $new_order_no = substr($new_order_no, strlen($new_order_no) - 3, 3);
+                    $new_order_no = 'DH' . $order_date->format('ymd') . '-' . $new_order_no;
+                } else {
+                    $new_order_no = 'DH' . $order_date->format('ymd') . '-001';
                 }
-                Log::debug('$new_order_returns = ' . Json::encode($new_order_returns));
-                DB::table('gold_sale_order_returns')->insert($new_order_returns);
-            }
-            $new_order_pays = [];
-            if($order_pays && count($order_pays)) {
-                foreach ($order_pays as $pay) {
-                    $new_pay = arrayCopy($pay);
+                $new_order['order_no'] = $new_order_no;
+                $created_at = date('Y-m-d H:i:s');
+                $new_order['created_at'] = $created_at;
+                $new_order['created_by'] = CRUDBooster::myId();
+                unset($new_order['id']);
+                $order_id = DB::table('gold_sale_orders')->insertGetId($new_order);
+                Log::debug('$order_id = ' . $order_id);
+
+                if ($order_details && count($order_details)) {
+                    $new_sale_order_details = [];
+                    foreach ($order_details as $detail) {
+                        $new_detail = [
+                            'order_id' => $order_id,
+                            'sort_no' => $detail['no'],
+                            'product_id' => $detail['id'],
+                            'age' => $detail['age'] ? $detail['age'] : 0,
+                            'discount_wage' => $detail['discount_machining_fee'] ? $detail['discount_machining_fee'] : 0
+                        ];
+                        array_push($new_sale_order_details, $new_detail);
+                    }
+                    DB::table('gold_sale_order_details')->insert($new_sale_order_details);
+                    foreach ($order_details as $detail) {
+                        DB::table('gold_products')->where('id', $detail['id'])->update(['qty' => 0, 'status' => 0, 'updated_at' => $created_at, 'updated_by' => CRUDBooster::myId(), 'notes' => 'Bán trong đơn hàng ' . $new_order_no]);
+                    }
+                }
+
+                $new_order_returns = [];
+                if ($order_returns && count($order_returns)) {
+                    foreach ($order_returns as $return) {
+                        $new_return = arrayCopy($return);
+                        unset($new_return['id']);
+                        $new_return['order_id'] = $order_id;
+                        Log::debug('$return = ' . Json::encode($new_return));
+                        array_push($new_order_returns, $new_return);
+                    }
+                    Log::debug('$new_order_returns = ' . Json::encode($new_order_returns));
+                    DB::table('gold_sale_order_returns')->insert($new_order_returns);
+                }
+                $new_order_pays = [];
+                if ($order_pays && count($order_pays)) {
+                    foreach ($order_pays as $pay) {
+                        $new_pay = arrayCopy($pay);
 //                unset($pay['id']);
-                    $new_pay['order_id'] = $order_id;
-                    array_push($new_order_pays, $new_pay);
+                        $new_pay['order_id'] = $order_id;
+                        array_push($new_order_pays, $new_pay);
+                    }
+                    DB::table('gold_sale_order_pays')->insert($new_order_pays);
                 }
-                DB::table('gold_sale_order_pays')->insert($new_order_pays);
+                $this->sendNotificationViaEmail($new_order_no, $order_date->format('d/m/Y'), $new_order['customer_id'], $new_order['saler_id']);
             }
-            $this->sendNotificationViaEmail($new_order_no, $order_date->format('d/m/Y'), $new_order['customer_id'], $new_order['saler_id']);
+            catch( \Exception $e){
+                DB::rollback();
+                Log::debug('PostAdd error $e = ' . Json::encode($e));
+                throw $e;
+            }
+            DB::commit();
             return response()->json(['id'=>$order_id, 'order_no'=>$new_order_no]);
         }
         private function sendNotificationViaEmail($order_no, $order_date, $customer_id, $saler_id){
@@ -426,7 +435,7 @@
             $id = intval($para['id']);
             $filename = 'DH-'.time();
             $database = \Config::get('database.connections.mysql');
-            $database['host'] = '127.0.0.1';
+            // $database['host'] = '127.0.0.1';
             $input = base_path().'/app/Reports/gold_invoice.jasper';
             $output = public_path() . '/output_reports/' . $filename;
             $parameter = ['id'=>$id];
@@ -448,7 +457,7 @@
             return Response::make($file, 200,
                 array(
                     'Content-type' => 'application/pdf',
-                    'Content-Disposition' => 'attachment;filename="hoa-don.pdf"'
+                    'Content-Disposition' => 'filename="hoa-don.pdf"'
                 )
             );
         }
@@ -464,6 +473,8 @@
             $parameter = ['id'=>$id];
             Log::debug('$input = ' . $input);
             Log::debug('$output = ' . $output);
+            $command = $jasper->process($input, $output, array('pdf'), $parameter, $database)->output();
+            Log::debug('$command = ' . $command);
             $jasper->process($input, $output, array('pdf'), $parameter, $database)->execute();
 
             while (!file_exists($output . '.pdf' )){
@@ -476,7 +487,7 @@
             return Response::make($file, 200,
                 array(
                     'Content-type' => 'application/pdf',
-                    'Content-Disposition' => 'attachment;filename="bang-ke-chi-tiet.pdf"'
+                    'Content-Disposition' => 'filename="bang-ke-chi-tiet.pdf"'
                 )
             );
         }
@@ -492,6 +503,8 @@
             $parameter = ['id'=>$id];
             Log::debug('$input = ' . $input);
             Log::debug('$output = ' . $output);
+            $command = $jasper->process($input, $output, array('xlsx'), $parameter, $database)->output();
+            Log::debug('$command = ' . $command);
             $jasper->process($input, $output, array('xlsx'), $parameter, $database)->execute();
 
             while (!file_exists($output . '.xlsx' )){
@@ -504,7 +517,7 @@
             return Response::make($file, 200,
                 array(
                     'Content-type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'Content-Disposition' => 'attachment;filename="ds-hang-xuat-kho.xlsx"'
+                    'Content-Disposition' => 'filename="ds-hang-xuat-kho.xlsx"'
                 )
             );
         }
@@ -566,9 +579,12 @@
 	    */
 	    public function hook_after_delete($id) {
 	        //Your code here
-
+            $order_details  = DB::table('gold_sale_order_details')->where('order_id',$id)->select('product_id')->get();
+            $created_at = date('Y-m-d H:i:s');
+            foreach ($order_details as $detail) {
+                DB::table('gold_products')->where('id', $detail->product_id)->update(['qty' => 1, 'status' => 1, 'updated_at' => $created_at, 'updated_by' => CRUDBooster::myId(), 'notes' => '']);
+            }
 	    }
-
 
 
 	    //By the way, you can still create your own method in here... :) 

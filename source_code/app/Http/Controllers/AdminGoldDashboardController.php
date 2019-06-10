@@ -4,78 +4,57 @@
 	use Request;
 	use DB;
 	use CRUDBooster;
-    use Enums;
-    use Illuminate\Support\Facades\Log;
 
-	class AdminGoldCustomersController extends CBExtendController {
+	class AdminGoldDashboardController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->title_field = "code";
+			$this->title_field = "id";
 			$this->limit = "20";
-			$this->orderby = "id,desc";
-			$this->global_privilege = false;
-			$this->button_table_action = true;
+			$this->orderby = "date,asc";
+			$this->global_privilege = true;
+			$this->button_table_action = false;
 			$this->button_bulk_action = false;
-			$this->button_action_style = "button_icon_text";
-			$this->button_add = true;
-			$this->button_edit = true;
-			$this->button_delete = true;
-			$this->button_detail = true;
+			$this->button_action_style = "button_icon";
+			$this->button_add = false;
+			$this->button_edit = false;
+			$this->button_delete = false;
+			$this->button_detail = false;
 			$this->button_show = false;
-			$this->button_filter = true;
+			$this->button_filter = false;
 			$this->button_import = false;
-			$this->button_export = true;
-			$this->table = "gold_customers";
+			$this->button_export = false;
+			$this->table = "gold_liabilities";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Mã khách hàng","name"=>"code"];
-			$this->col[] = ["label"=>"Mã tạm","name"=>"tmp_code"];
-            $this->col[] = ["label"=>"Tên khách hàng","name"=>"name"];
-            $this->col[] = ["label"=>"Ngày sinh","name"=>"dob", "callback_php"=>'date_time_format($row->dob, \'Y-m-d H:i:s\', \'d/m/Y\');'];
-			$this->col[] = ["label"=>"Tên tiệm vàng","name"=>"store_name"];
-			$this->col[] = ["label"=>"Địa chỉ","name"=>"address"];
-            $this->col[] = ["label"=>"Số ĐT bàn","name"=>"phone"];
-            $this->col[] = ["label"=>"Số ĐT Zalo","name"=>"zalo_phone"];
-            $this->col[] = ["label"=>"Nhân viên bán hàng","name"=>"saler_id","join"=>"cms_users,name"];
-            $this->col[] = ["label"=>"Người tạo","name"=>"created_by","join"=>"cms_users,name"];
-            $this->col[] = ["label"=>"Ngày tạo","name"=>"created_at","callback_php"=>'date_time_format($row->created_at, \'Y-m-d H:i:s\', \'d/m/Y H:i:s\');'];
-            $this->col[] = ["label"=>"Người sửa","name"=>"updated_by","join"=>"cms_users,name"];
-            $this->col[] = ["label"=>"Ngày sửa","name"=>"updated_at","callback_php"=>'date_time_format($row->updated_at, \'Y-m-d H:i:s\', \'d/m/Y H:i:s\');'];
+            $this->col[] = ["label"=>"Mã khách hàng","name"=>"customer_id","join"=>"gold_customers,code"];
+            $this->col[] = ["label"=>"Tên khách hàng","name"=>"customer_id","join"=>"gold_customers,name"];
+            $this->col[] = ["label"=>"Nhân viên bán hàng","name"=>"saler_name"];
+            $this->col[] = ["label"=>"Ngày công nợ","name"=>"date","callback_php"=>'date_time_format($row->date, \'Y-m-d H:i:s\', \'d/m/Y\');'];
+            $this->col[] = ["label"=>"Tuổi bán(%)","name"=>"age_sell", "callback_php"=>'number_format($row->age_sell, 3)'];
+            $this->col[] = ["label"=>"Nợ vàng","name"=>DB::raw('gold_liabilities.exchange_g10_credit - gold_liabilities.exchange_g10_debit as debt_exchange_g10'), "callback_php"=>'number_format($row->debt_exchange_g10, 3)'];
+            $this->col[] = ["label"=>"Nợ công","name"=>DB::raw('gold_liabilities.wage_credit - gold_liabilities.wage_debit as debt_wage'), "callback_php"=>'number_format($row->debt_wage)'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-            $this->form[] = ['label' => 'Mã khách hàng', 'name' => 'code', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-4', 'help' => 'Mã này do kế toán phát sinh', 'readonly' => (CRUDBooster::myPrivilegeId() != 5)];
-			$this->form[] = ['label'=>'Mã khách hàng tạm nhập','name'=>'tmp_code','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-4','help'=>'Mã này do saler phát sinh tạm cho khách hàng mới', 'readonly' => (CRUDBooster::myPrivilegeId() != 2)];
-            $this->form[] = ['label'=>'Tên khách hàng','name'=>'name','type'=>'text','validation'=>'required|string|min:3|max:70','width'=>'col-sm-4'];
-            $this->form[] = ['label'=>'Ngày sinh chủ tiệm','name'=>'dob','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-4'];
-            $this->form[] = ['label'=>'Tên tiệm vàng','name'=>'store_name','type'=>'text','validation'=>'required|string|min:3|max:70','width'=>'col-sm-4'];
-            $this->form[] = ['label'=>'Số điện thoại bàn','name'=>'phone','type'=>'number','validation'=>'required|numeric','width'=>'col-sm-4'];
-            $this->form[] = ['label'=>'Số điện thoại di động có Zalo','name'=>'zalo_phone','type'=>'number','validation'=>'required|numeric','width'=>'col-sm-4'];
-            $this->form[] = ['label'=>'Nhân viên bán hàng','name'=>'saler_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-4','datatable'=>'cms_users,name', 'datatable_where'=>'id_cms_privileges = 2', 'datatable_format'=>"employee_code,' - ',name,' (',email,')'"];
-            //$this->form[] = ['label'=>'Địa chỉ','name'=>'address','type'=>'textarea','validation'=>'required|min:1|max:255','width'=>'col-sm-10','help'=>'Số nhà, Tên Đường/chợ/ấp/khu phố/thôn/xóm, Xã/phường/thị trấn, Huyện/quận/thị xã/thành phố, Tỉnh/thành phố trực thuộc TW'];
-            $this->form[] = ['label'=>'Số nhà','name'=>'address_home_number','type'=>'text','validation'=>'required|min:1|max:20','width'=>'col-sm-4'];
-            $this->form[] = ['label'=>'Tên đường','name'=>'address_street','type'=>'text','validation'=>'required|min:1|max:100','width'=>'col-sm-4','help'=>'Tên Đường/chợ/ấp/khu phố/thôn/xóm'];
-            $this->form[] = ['label'=>'Xã/Phường','name'=>'address_ward','type'=>'text','validation'=>'required|min:1|max:100','width'=>'col-sm-4','help'=>'Xã/phường/thị trấn'];
-            $this->form[] = ['label'=>'Quận/Huyện','name'=>'address_district','type'=>'text','validation'=>'required|min:1|max:100','width'=>'col-sm-4','help'=>'Huyện/quận/thị xã/thành phố trực thuộc Tỉnh'];
-            $this->form[] = ['label'=>'Tỉnh/Thành','name'=>'address_province','type'=>'text','validation'=>'required|min:1|max:100','width'=>'col-sm-4','help'=>'Tỉnh/thành phố trực thuộc Trung Ương'];
-            $this->form[] = ['label'=>'Ghi chú','name'=>'notes','type'=>'textarea','validation'=>'min:1|max:255','width'=>'col-sm-10'];
 
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ["label"=>"Code","name"=>"code","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
-			//$this->form[] = ["label"=>"Tmp Code","name"=>"tmp_code","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
-			//$this->form[] = ["label"=>"Name","name"=>"name","type"=>"text","required"=>TRUE,"validation"=>"required|string|min:3|max:70","placeholder"=>"Bạn chỉ có thể nhập số"];
-			//$this->form[] = ["label"=>"Address","name"=>"address","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
-			//$this->form[] = ["label"=>"Phone","name"=>"phone","type"=>"number","required"=>TRUE,"validation"=>"required|numeric","placeholder"=>"Bạn chỉ có thể nhập số"];
-			//$this->form[] = ["label"=>"Import","name"=>"import","type"=>"number","required"=>TRUE,"validation"=>"required|integer|min:0"];
-			//$this->form[] = ["label"=>"Notes","name"=>"notes","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"Import Liabilities Id","name"=>"import_liabilities_id","type"=>"select2","required"=>TRUE,"validation"=>"required|integer|min:0","datatable"=>"import_liabilities,id"];
+			//$this->form[] = ["label"=>"Customer Id","name"=>"customer_id","type"=>"select2","required"=>TRUE,"validation"=>"required|integer|min:0","datatable"=>"customer,id"];
+			//$this->form[] = ["label"=>"Saler Name","name"=>"saler_name","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"Date","name"=>"date","type"=>"datetime","required"=>TRUE,"validation"=>"required|date_format:Y-m-d H:i:s"];
+			//$this->form[] = ["label"=>"Age Sell","name"=>"age_sell","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"Exchange G10 Credit","name"=>"exchange_g10_credit","type"=>"money","required"=>TRUE,"validation"=>"required|integer|min:0"];
+			//$this->form[] = ["label"=>"Wage Credit","name"=>"wage_credit","type"=>"money","required"=>TRUE,"validation"=>"required|integer|min:0"];
+			//$this->form[] = ["label"=>"Exchange G10 Debit","name"=>"exchange_g10_debit","type"=>"money","required"=>TRUE,"validation"=>"required|integer|min:0"];
+			//$this->form[] = ["label"=>"Wage Debit","name"=>"wage_debit","type"=>"money","required"=>TRUE,"validation"=>"required|integer|min:0"];
 			//$this->form[] = ["label"=>"Created By","name"=>"created_by","type"=>"number","required"=>TRUE,"validation"=>"required|integer|min:0"];
 			//$this->form[] = ["label"=>"Updated By","name"=>"updated_by","type"=>"number","required"=>TRUE,"validation"=>"required|integer|min:0"];
 			//$this->form[] = ["label"=>"Deleted By","name"=>"deleted_by","type"=>"number","required"=>TRUE,"validation"=>"required|integer|min:0"];
@@ -268,8 +247,17 @@
 	        //Your code here
             if(CRUDBooster::myPrivilegeId() == 2)// Nhân viên bán hàng
             {
-                $query->where('gold_customers.saler_id', CRUDBooster::myId());
+                $query->leftJoin('gold_import_liabilities as IL', 'IL.id', '=', 'gold_liabilities.import_liabilities_id')
+                    ->whereRaw('IL.deleted_at is null')
+                    ->whereRaw("trim(upper(gold_liabilities.saler_name)) like '".CRUDBooster::myName()."'");
+            }else{
+                $query->leftJoin('gold_import_liabilities as IL', 'IL.id', '=', 'gold_liabilities.import_liabilities_id')
+                    ->whereRaw('IL.deleted_at is null');
             }
+            $from_date = date('Y-m-d', strtotime('-6 day'));
+            $query->where('date', '<', $from_date);
+            $query->whereRaw('(gold_liabilities.exchange_g10_credit - gold_liabilities.exchange_g10_debit) >= 5');
+//            $query->orderBy('debt_exchange_g10', 'desc');
 	    }
 
 	    /*
@@ -291,7 +279,7 @@
 	    */
 	    public function hook_before_add(&$postdata) {        
 	        //Your code here
-            $postdata['address'] = $postdata['address_home_number'].', '.$postdata['address_street'].', '.$postdata['address_ward'].', '.$postdata['address_district'].', '.$postdata['address_province'];
+
 	    }
 
 	    /* 
@@ -316,7 +304,7 @@
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
 	        //Your code here
-            $postdata['address'] = $postdata['address_home_number'].', '.$postdata['address_street'].', '.$postdata['address_ward'].', '.$postdata['address_district'].', '.$postdata['address_province'];
+
 	    }
 
 	    /* 
@@ -355,36 +343,9 @@
 
 	    }
 
-	    //By the way, you can still create your own method in here... :)
 
-        public function getSearchCustomer(){
-            //First, Add an auth
-            if(!CRUDBooster::isView()) CRUDBooster::redirect(CRUDBooster::adminPath(),trans('crudbooster.denied_access'));
-            $para = Request::all();
-            $customer_code = $para['customer_code'];
 
-//            Log::debug('$para = '.json_encode($para));
-            $customer = DB::table('gold_customers as C')
-                ->whereRaw('C.deleted_at is null')
-                ->where('C.code', $customer_code)
-                //->select('C.id','C.code','C.tmp_code','C.name','C.address','C.phone')
-                ->first();
-//            Log::debug($customers->tosql());
-            if(!$customer) {
-                $customer = DB::table('gold_customers as C')
-                    ->whereRaw('C.deleted_at is null')
-                    ->where('C.tmp_code', $customer_code)
-                    //->select('C.id','C.code','C.tmp_code','C.name','C.address','C.phone')
-                    ->first();
-            }
-            if($customer) {
-                $debt = DB::table('gold_liabilities as L')
-                    ->whereRaw('L.deleted_at is null')
-                    ->where('L.customer_id', $customer->id)
-                    ->orderBy('L.import_liabilities_id', 'desc')
-                    ->first();
-            }
-            return ['customer'=>$customer, 'debt'=>$debt];
-        }
+	    //By the way, you can still create your own method in here... :) 
+
 
 	}

@@ -591,14 +591,22 @@
                             $import_row[$colname] = null;
                         }else{
                             $tmp_date = DateTime::createFromFormat('d/m/y h:i:s A', $value[$s]);
-                            $import_row[$colname] = $tmp_date->format('Y-m-d H:i:s');
+                            if($tmp_date) {
+                                $import_row[$colname] = $tmp_date->format('Y-m-d H:i:s');
+                            } else {
+                                $import_row[$colname] = null;
+                            }
                         }
                     }  elseif($colname  == 'make_stemp_date') {
                         if($value[$s] == ''){
                             $import_row[$colname] = null;
                         }else{
                             $tmp_date = DateTime::createFromFormat('d/m/y h:i:s A', $value[$s]);
-                            $import_row[$colname] = $tmp_date->format('Y-m-d H:i:s');
+                            if($tmp_date) {
+                                $import_row[$colname] = $tmp_date->format('Y-m-d H:i:s');
+                            }else{
+                                $import_row[$colname] = null;
+                            }
                         }
                     } elseif($this->isForeignKey($colname)) {
 
@@ -666,7 +674,10 @@
 //
 //                Log::debug('$has_title_field = '.$has_title_field);
 //                if($has_title_field==false) continue;
-
+                if(!$import_row['bar_code']){
+                    Cache::increment('success_'.$file_md5);
+                    continue;
+                }
                 try{
                     $row_exists = DB::table($this->table)->where('bar_code', $import_row['bar_code'])->first();
                     if(!$row_exists) {

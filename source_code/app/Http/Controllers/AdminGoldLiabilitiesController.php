@@ -49,7 +49,7 @@ use Illuminate\Support\Facades\Log;
 			$this->col[] = ["label"=>"Q10","name"=>"exchange_g10_credit", "callback_php"=>'number_format($row->exchange_g10_credit, 3)'];
 			$this->col[] = ["label"=>"Tiền công","name"=>"wage_credit", "callback_php"=>'number_format($row->wage_credit)'];
 			$this->col[] = ["label"=>"Q10","name"=>"exchange_g10_debit", "callback_php"=>'number_format($row->exchange_g10_debit, 3)'];
-			$this->col[] = ["label"=>"Tiền công","name"=>"exchange_g10_debit", "callback_php"=>'number_format($row->exchange_g10_debit)'];
+			$this->col[] = ["label"=>"Tiền công","name"=>"wage_debit", "callback_php"=>'number_format($row->wage_debit)'];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -511,7 +511,11 @@ use Illuminate\Support\Facades\Log;
 //                Log::debug('$value = '.$value);
                 if($value['ma_khach_hang'] == 'Tổng cộng'){
                     Cache::increment('success_'.$file_md5);
-                    break;
+                    continue;
+                }
+                if(!$value['ma_khach_hang']){
+                    Cache::increment('success_'.$file_md5);
+                    continue;
                 }
                 $import_row = array();
                 foreach($table_columns as $colname) {

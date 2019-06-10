@@ -230,8 +230,7 @@
 	    |
 	    */
 	    public function hook_query_index(&$query) {
-	        //Your code here
-	            
+	        $query->where('cms_users.id_cms_privileges', 2); // saler
 	    }
 
 	    /*

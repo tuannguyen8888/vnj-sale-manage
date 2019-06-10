@@ -1,7 +1,7 @@
 <?php
 class Enums{
     public static $PRODUCT_STATUS = "0|<lable class='label label-danger'>Hết hàng</lable>;1|<lable class='label label-info'>Còn hàng</lable>";
-    public static $ORDER_TYPES = "2|<lable class='label label-info'>ĐH chuẩn</lable>;1|<lable class='label label-success'>ĐH nhanh</lable>";
+    public static $ORDER_TYPES = "3|<lable class='label label-danger'>ĐH vi phạm</lable>;2|<lable class='label label-info'>ĐH chuẩn</lable>;1|<lable class='label label-success'>ĐH nhanh</lable>";
     public static $IMPORT = "0|Phát sinh khi saler bán cho khách hàng mới;1|Import từ bảng công nợ của kế toán";
 }
 

@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 7.2.1.final using JasperReports Library version 6.6.0  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="gold_invoice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="5" bottomMargin="5" uuid="413988bb-8f38-4463-8d00-d677929f92f7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="gold_invoice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="413988bb-8f38-4463-8d00-d677929f92f7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="gold_sales_manage_connection"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="272"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="717"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#FFFFFF">
@@ -130,23 +121,23 @@ ORDER BY SOP.id]]>
     SO.customer_id,
     CASE WHEN C.code is null THEN C.tmp_code ELSE C.code END as customer_code,
     C.name as customer_name,
-    (SELECT count(*) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) <> 'V_' AND upper(substring(P.product_name,1,2)) <> 'B'  AND SOD.order_id = SO.id ) as d1_qty,
-    IFNULL((SELECT sum(P.total_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) <> 'V_' AND upper(substring(P.product_name,1,2)) <> 'B_'  AND SOD.order_id = SO.id ),0) as d1_total_weight,
-    IFNULL((SELECT sum(P.gem_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) <> 'V_' AND upper(substring(P.product_name,1,2)) <> 'B_'  AND SOD.order_id = SO.id ),0) as d1_total_gem_weight,
-    IFNULL((SELECT sum(P.gold_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) <> 'V_' AND upper(substring(P.product_name,1,2)) <> 'B_'  AND SOD.order_id = SO.id ),0) as d1_total_gold_weight,
-    IFNULL((SELECT sum(P.retail_machining_fee) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) <> 'V_' AND upper(substring(P.product_name,1,2)) <> 'B_'  AND SOD.order_id = SO.id ),0) as d1_total_wage,
+    (SELECT count(*) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) <> 'V_' AND upper(substring(P.product_code,1,2)) <> 'B_'  AND SOD.order_id = SO.id ) as d1_qty,
+    IFNULL((SELECT sum(P.total_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) <> 'V_' AND upper(substring(P.product_code,1,2)) <> 'B_'  AND SOD.order_id = SO.id ),0) as d1_total_weight,
+    IFNULL((SELECT sum(P.gem_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) <> 'V_' AND upper(substring(P.product_code,1,2)) <> 'B_'  AND SOD.order_id = SO.id ),0) as d1_total_gem_weight,
+    IFNULL((SELECT sum(P.gold_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) <> 'V_' AND upper(substring(P.product_code,1,2)) <> 'B_'  AND SOD.order_id = SO.id ),0) as d1_total_gold_weight,
+    IFNULL((SELECT sum(P.retail_machining_fee) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) <> 'V_' AND upper(substring(P.product_code,1,2)) <> 'B_'  AND SOD.order_id = SO.id ),0) as d1_total_wage,
     SO.gold_age_1,
-    (SELECT count(*) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'B_' AND SOD.order_id = SO.id ) as d2_qty,
-    IFNULL((SELECT sum(P.total_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'B_' AND SOD.order_id = SO.id ),0) as d2_total_weight,
-    IFNULL((SELECT sum(P.gem_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'B_' AND SOD.order_id = SO.id ),0) as d2_total_gem_weight,
-    IFNULL((SELECT sum(P.gold_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'B_' AND SOD.order_id = SO.id ),0) as d2_total_gold_weight,
-    IFNULL((SELECT sum(P.retail_machining_fee) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'B_' AND SOD.order_id = SO.id ),0) as d2_total_wage,
+    (SELECT count(*) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'B_' AND SOD.order_id = SO.id ) as d2_qty,
+    IFNULL((SELECT sum(P.total_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'B_' AND SOD.order_id = SO.id ),0) as d2_total_weight,
+    IFNULL((SELECT sum(P.gem_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'B_' AND SOD.order_id = SO.id ),0) as d2_total_gem_weight,
+    IFNULL((SELECT sum(P.gold_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'B_' AND SOD.order_id = SO.id ),0) as d2_total_gold_weight,
+    IFNULL((SELECT sum(P.retail_machining_fee) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'B_' AND SOD.order_id = SO.id ),0) as d2_total_wage,
     SO.gold_age_2,
-    (SELECT count(*) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'V_' AND SOD.order_id = SO.id ) as d3_qty,
-    IFNULL((SELECT sum(P.total_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'V_' AND SOD.order_id = SO.id ),0) as d3_total_weight,
-    IFNULL((SELECT sum(P.gem_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'V_' AND SOD.order_id = SO.id ),0) as d3_total_gem_weight,
-    IFNULL((SELECT sum(P.gold_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'V_' AND SOD.order_id = SO.id ),0) as d3_total_gold_weight,
-    IFNULL((SELECT sum(P.retail_machining_fee) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_name,1,2)) = 'V_' AND SOD.order_id = SO.id ),0) as d3_total_wage,
+    (SELECT count(*) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'V_' AND SOD.order_id = SO.id ) as d3_qty,
+    IFNULL((SELECT sum(P.total_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'V_' AND SOD.order_id = SO.id ),0) as d3_total_weight,
+    IFNULL((SELECT sum(P.gem_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'V_' AND SOD.order_id = SO.id ),0) as d3_total_gem_weight,
+    IFNULL((SELECT sum(P.gold_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'V_' AND SOD.order_id = SO.id ),0) as d3_total_gold_weight,
+    IFNULL((SELECT sum(P.retail_machining_fee) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE upper(substring(P.product_code,1,2)) = 'V_' AND SOD.order_id = SO.id ),0) as d3_total_wage,
     SO.gold_age_3,
     SO.sampling_discount,
     SO.reduce,
@@ -178,6 +169,7 @@ ORDER BY SOP.id]]>
     IFNULL((SELECT SOR.wage FROM gold_sale_order_returns as SOR WHERE SOR.type = 3 AND SOR.order_id = SO.id  limit 1),0) as r3_total_wage,
     DATE_FORMAT(SO.pay_date, '%d/%m/%Y') as pay_date,
     SO.pay_total_wage,
+    IFNULL(SO.pay_total_wage,0) + IFNULL((SELECT SUM(IFNULL(SOP.money,0)) FROM gold_sale_order_pays as SOP WHERE SOP.pay_method = 3 AND  SOP.order_id = SO.id), 0) as pay_total_money_and_wage,
     IFNULL((SELECT SUM(SOP.exchange_g10) FROM gold_sale_order_pays as SOP WHERE SOP.order_id = SO.id),0) as pay_total_exchange_g10,
     SO.total_exchange_g10,
     SO.total_wage,
@@ -377,6 +369,9 @@ WHERE SO.id = $P{id}]]>
 		<property name="com.jaspersoft.studio.field.label" value="pay_total_wage"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="gold_sale_orders"/>
 	</field>
+	<field name="pay_total_money_and_wage" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="pay_total_money_and_wage"/>
+	</field>
 	<field name="pay_total_exchange_g10" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.label" value="pay_total_exchange_g10"/>
 	</field>
@@ -397,7 +392,7 @@ WHERE SO.id = $P{id}]]>
 		<property name="com.jaspersoft.studio.field.tree.path" value="gold_sale_orders"/>
 	</field>
 	<title>
-		<band height="553" splitType="Stretch">
+		<band height="346" splitType="Stretch">
 			<staticText>
 				<reportElement x="130" y="0" width="300" height="30" uuid="beb19bc4-015f-4fea-9e74-01b6c0f4bfa0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
@@ -737,7 +732,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="210" y="131" width="60" height="25" uuid="a7e6384d-43f2-4fb0-9337-c309ea6c17f8">
+				<reportElement x="210" y="131" width="50" height="25" uuid="a7e6384d-43f2-4fb0-9337-c309ea6c17f8">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
@@ -755,7 +750,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="270" y="131" width="60" height="25" uuid="df5531e6-2ae6-4641-8246-7bf9d24ed165"/>
+				<reportElement x="260" y="131" width="70" height="25" uuid="df5531e6-2ae6-4641-8246-7bf9d24ed165"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -877,7 +872,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Tổng hàng khác]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="201" width="150" height="15" uuid="b30ebd6f-87d9-4278-88f7-7d09798b6cb4">
+				<reportElement x="0" y="216" width="90" height="15" uuid="b30ebd6f-87d9-4278-88f7-7d09798b6cb4">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -892,10 +887,10 @@ WHERE SO.id = $P{id}]]>
 					<font fontName="Arial" isBold="true"/>
 					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[Chiết khấu công: ]]></text>
+				<text><![CDATA[Chiết khấu công]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="216" width="150" height="15" uuid="138ce4eb-e3d7-4b38-83f0-7fb7799dd320">
+				<reportElement x="0" y="231" width="90" height="15" uuid="138ce4eb-e3d7-4b38-83f0-7fb7799dd320">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -910,7 +905,7 @@ WHERE SO.id = $P{id}]]>
 					<font fontName="Arial" isBold="true"/>
 					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[Giảm trừ công: ]]></text>
+				<text><![CDATA[Giảm trừ công]]></text>
 			</staticText>
 			<textField pattern="#,###.###" isBlankWhenNull="true">
 				<reportElement x="90" y="156" width="60" height="15" isRemoveLineWhenBlank="true" uuid="fb1ccd4a-b3ae-465c-a9a7-d64421efac8b">
@@ -1005,7 +1000,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{d3_total_weight}!=0?$F{d3_total_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="210" y="156" width="60" height="15" uuid="da195547-c4ba-40bd-b2a7-421694b85c90">
+				<reportElement x="210" y="156" width="50" height="15" uuid="da195547-c4ba-40bd-b2a7-421694b85c90">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1020,7 +1015,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{d1_total_gem_weight}!=0?$F{d1_total_gem_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="210" y="171" width="60" height="15" uuid="bfe88a91-644b-4559-89f3-b12267f4ddc2">
+				<reportElement x="210" y="171" width="50" height="15" uuid="bfe88a91-644b-4559-89f3-b12267f4ddc2">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1035,7 +1030,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{d2_total_gem_weight}!=0?$F{d2_total_gem_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="210" y="186" width="60" height="15" uuid="921ae42a-a717-498a-be29-aa7a81264c87">
+				<reportElement x="210" y="186" width="50" height="15" uuid="921ae42a-a717-498a-be29-aa7a81264c87">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1051,7 +1046,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{d3_total_gem_weight}!=0?$F{d3_total_gem_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="156" width="60" height="15" uuid="298d00a5-1f07-48c3-b3c9-a4e06e8ba568">
+				<reportElement x="260" y="156" width="70" height="15" uuid="298d00a5-1f07-48c3-b3c9-a4e06e8ba568">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1066,7 +1061,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{d1_total_gold_weight}!=0?$F{d1_total_gold_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="171" width="60" height="15" uuid="0371107d-7049-447d-8097-f4f48e7425fc">
+				<reportElement x="260" y="171" width="70" height="15" uuid="0371107d-7049-447d-8097-f4f48e7425fc">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1081,7 +1076,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{d2_total_gold_weight}!=0?$F{d2_total_gold_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="186" width="60" height="15" uuid="0762a4a6-ec9d-402a-8bc1-346390a9134c">
+				<reportElement x="260" y="186" width="70" height="15" uuid="0762a4a6-ec9d-402a-8bc1-346390a9134c">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1235,7 +1230,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{d3_total_wage}!=0?$F{d3_total_wage}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="330" y="201" width="60" height="15" uuid="532929d9-1c3d-4be2-a749-2e8b0a655dfe">
+				<reportElement x="330" y="216" width="60" height="15" uuid="532929d9-1c3d-4be2-a749-2e8b0a655dfe">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1249,10 +1244,10 @@ WHERE SO.id = $P{id}]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{sampling_discount}!=0?$F{sampling_discount}:null]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{sampling_discount}!=0?($F{sampling_discount} + " %"):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="216" width="160" height="15" uuid="1c97261c-ef90-4ad9-9943-bfc80b605afe">
+				<reportElement x="390" y="231" width="160" height="15" uuid="1c97261c-ef90-4ad9-9943-bfc80b605afe">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1269,7 +1264,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{reduce}!=0?$F{reduce}:null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="231" width="90" height="15" uuid="066cdaee-9d56-4be4-9508-64ed4ff7d960">
+				<reportElement x="0" y="201" width="90" height="15" uuid="066cdaee-9d56-4be4-9508-64ed4ff7d960">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1287,7 +1282,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Tổng cộng]]></text>
 			</staticText>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="90" y="231" width="60" height="15" uuid="725ef55e-c8ec-4282-9eca-ad43d8bd533c">
+				<reportElement x="90" y="201" width="60" height="15" uuid="725ef55e-c8ec-4282-9eca-ad43d8bd533c">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1304,7 +1299,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{d1_qty} + $F{d2_qty} + $F{d3_qty})!=0?($F{d1_qty} + $F{d2_qty} + $F{d3_qty}):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="150" y="231" width="60" height="15" uuid="7d023f26-603d-4471-8960-257200224385">
+				<reportElement x="150" y="201" width="60" height="15" uuid="7d023f26-603d-4471-8960-257200224385">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1321,7 +1316,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{d1_total_weight} + $F{d2_total_weight} + $F{d3_total_weight})!=0?($F{d1_total_weight} + $F{d2_total_weight} + $F{d3_total_weight}):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="210" y="231" width="60" height="15" uuid="8e9af486-9769-4462-a31b-814f77ea4e4e">
+				<reportElement x="210" y="201" width="50" height="15" uuid="8e9af486-9769-4462-a31b-814f77ea4e4e">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1338,7 +1333,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{d1_total_gem_weight} + $F{d2_total_gem_weight} + $F{d3_total_gem_weight}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="231" width="60" height="15" uuid="432b0972-d430-467a-82c4-d76c377c89fc">
+				<reportElement x="260" y="201" width="70" height="15" uuid="432b0972-d430-467a-82c4-d76c377c89fc">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1355,7 +1350,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{d1_total_gold_weight} + $F{d2_total_gold_weight} + $F{d3_total_gold_weight})!=0?($F{d1_total_gold_weight} + $F{d2_total_gold_weight} + $F{d3_total_gold_weight}):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="231" width="80" height="15" uuid="e1165fdd-b8a4-4ae8-88bc-65697cdea99e">
+				<reportElement x="390" y="201" width="80" height="15" uuid="e1165fdd-b8a4-4ae8-88bc-65697cdea99e">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1373,7 +1368,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{d1_total_gold_weight} * $F{gold_age_1} / 100 + $F{d2_total_gold_weight} * $F{gold_age_2} / 100 + $F{d3_total_gold_weight} * $F{gold_age_3} / 100)!=0?($F{d1_total_gold_weight} * $F{gold_age_1} / 100 + $F{d2_total_gold_weight} * $F{gold_age_2} / 100 + $F{d3_total_gold_weight} * $F{gold_age_3} / 100):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="470" y="231" width="80" height="15" uuid="8927fa56-1769-43b0-b30d-12ecd86d625b">
+				<reportElement x="470" y="201" width="80" height="15" uuid="8927fa56-1769-43b0-b30d-12ecd86d625b">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1391,7 +1386,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage})!=0?($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}):null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="330" y="231" width="60" height="15" uuid="36881ca5-79cb-4dae-8b61-12c1bc12612c">
+				<reportElement x="330" y="201" width="60" height="15" uuid="36881ca5-79cb-4dae-8b61-12c1bc12612c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -1403,7 +1398,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="246" width="150" height="15" uuid="f93176eb-ec24-4eab-89c8-b8d1da3d3ce3">
+				<reportElement x="0" y="261" width="150" height="15" uuid="f93176eb-ec24-4eab-89c8-b8d1da3d3ce3">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1418,10 +1413,10 @@ WHERE SO.id = $P{id}]]>
 					<font fontName="Arial" isBold="true"/>
 					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[Tổng cân thực tế (Chỉ): ]]></text>
+				<text><![CDATA[Tổng cân luôn temp]]></text>
 			</staticText>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="150" y="246" width="60" height="15" uuid="fc99a85a-9c7b-42a2-811c-64eb7c0835db">
+				<reportElement x="150" y="261" width="60" height="15" uuid="fc99a85a-9c7b-42a2-811c-64eb7c0835db">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1438,7 +1433,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{actual_weight}!=0?$F{actual_weight}:null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="210" y="246" width="60" height="15" uuid="5fca2f6a-f7b8-4a48-a07d-fa25d86c4b5f">
+				<reportElement x="210" y="261" width="50" height="15" uuid="5fca2f6a-f7b8-4a48-a07d-fa25d86c4b5f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -1451,10 +1446,10 @@ WHERE SO.id = $P{id}]]>
 					<font fontName="Arial" size="9" isBold="true"/>
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
-				<text><![CDATA[T.lượng tem]]></text>
+				<text><![CDATA[TL Temp]]></text>
 			</staticText>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="246" width="60" height="15" uuid="730a44c5-300e-416c-8ef5-2b068fc48667">
+				<reportElement x="260" y="261" width="70" height="15" uuid="730a44c5-300e-416c-8ef5-2b068fc48667">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1471,17 +1466,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[(($F{actual_weight} - ($F{d1_total_weight} + $F{d2_total_weight} + $F{d3_total_weight})) / ($F{d1_qty} + $F{d2_qty} + $F{d3_qty}))!=0?(($F{actual_weight} - ($F{d1_total_weight} + $F{d2_total_weight} + $F{d3_total_weight})) / ($F{d1_qty} + $F{d2_qty} + $F{d3_qty})):null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="330" width="180" height="15" uuid="83d6a280-73eb-4bef-be48-ee3cf60d6825">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
-					<font fontName="Arial" isBold="true"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
-				</textElement>
-				<text><![CDATA[3. HÀNG TRẢ LẠI]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="283" width="90" height="25" uuid="46f51b2d-ee6f-4c4b-9877-344254e991d7">
+				<reportElement x="0" y="298" width="90" height="25" uuid="46f51b2d-ee6f-4c4b-9877-344254e991d7">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1499,7 +1484,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Ngày bán]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="90" y="283" width="70" height="25" uuid="ca2dcb10-c7dc-4a2e-868e-304324215526">
+				<reportElement x="90" y="298" width="70" height="25" uuid="ca2dcb10-c7dc-4a2e-868e-304324215526">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1517,7 +1502,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Số ngày nợ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="390" y="283" width="80" height="25" uuid="92c03a44-088a-41be-9b80-7e210276954c">
+				<reportElement x="390" y="298" width="80" height="25" uuid="92c03a44-088a-41be-9b80-7e210276954c">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1536,7 +1521,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="470" y="283" width="80" height="25" uuid="a03e0f3c-9d7c-4dd8-b66c-1a45fb12c372">
+				<reportElement x="470" y="298" width="80" height="25" uuid="a03e0f3c-9d7c-4dd8-b66c-1a45fb12c372">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1555,7 +1540,7 @@ WHERE SO.id = $P{id}]]>
 (Đồng)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="160" y="283" width="230" height="25" uuid="329ebc7f-fd3f-4714-ac4e-e72db0d74e34">
+				<reportElement x="160" y="298" width="230" height="25" uuid="329ebc7f-fd3f-4714-ac4e-e72db0d74e34">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
 					<property name="com.jaspersoft.studio.unit.spacingAfter" value="px"/>
@@ -1572,7 +1557,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="308" width="90" height="20" uuid="adb79dc7-e8cf-43bb-a1ab-492e35b9cf3a">
+				<reportElement x="0" y="323" width="90" height="20" uuid="adb79dc7-e8cf-43bb-a1ab-492e35b9cf3a">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
@@ -1589,7 +1574,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{debt_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="90" y="308" width="60" height="20" uuid="3789ef1f-cd85-426b-9949-c153131712a1">
+				<reportElement x="90" y="323" width="60" height="20" uuid="3789ef1f-cd85-426b-9949-c153131712a1">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
@@ -1606,7 +1591,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{days_diff}!=0?$F{days_diff}:null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="150" y="308" width="240" height="20" uuid="5c210627-1a75-4028-a924-bf233f23b674"/>
+				<reportElement x="150" y="323" width="240" height="20" uuid="5c210627-1a75-4028-a924-bf233f23b674"/>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
@@ -1614,7 +1599,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="308" width="80" height="20" uuid="3adb1579-b36c-497e-9e01-16f03882eb3b">
+				<reportElement x="390" y="323" width="80" height="20" uuid="3adb1579-b36c-497e-9e01-16f03882eb3b">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
@@ -1631,7 +1616,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{exchange_g10}!=0?$F{exchange_g10}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="470" y="308" width="80" height="20" uuid="fdbb92fa-8f1c-4703-9dca-a27de51c6068">
+				<reportElement x="470" y="323" width="80" height="20" uuid="fdbb92fa-8f1c-4703-9dca-a27de51c6068">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
@@ -1648,7 +1633,119 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{wage}!=0?$F{wage}:null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="345" width="90" height="25" uuid="5b397d24-8300-4b57-8a20-d5328c1ca59b">
+				<reportElement x="0" y="283" width="180" height="15" uuid="c3d11805-26e2-4351-8797-0523cda5ae9c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" isBold="true"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
+				</textElement>
+				<text><![CDATA[2. CÔNG NỢ CŨ (SAU PHỔ)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="215" width="240" height="31" uuid="f89ad736-6dd2-4552-9801-63f13a3a8d2b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement x="390" y="215" width="160" height="15" uuid="f861a35e-9428-47ca-9a92-4e10a34a0092">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100)!=0?(($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100):null]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="246" width="90" height="15" uuid="084c6e69-d6c8-4dbd-8400-5e220631828f">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+					<paragraph leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Còn lại]]></text>
+			</staticText>
+			<textField pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement x="390" y="246" width="160" height="15" uuid="ee42715a-5a6e-4670-8319-59d8cf6ef5ac">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+					<paragraph leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage} - (($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100) - $F{reduce})!=0?($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage} - (($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100) - $F{reduce}):null]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="90" y="246" width="240" height="15" uuid="9792d2e6-b6d8-4217-81cd-a4a5a89be99a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="246" width="60" height="15" uuid="0f37ea92-5ec4-4a55-855f-f92af8f458f7"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="108">
+			<printWhenExpression><![CDATA[OR($F{r1_qty}!=0,$F{r2_qty}!=0, $F{r3_qty}!=0)]]></printWhenExpression>
+			<staticText>
+				<reportElement x="0" y="0" width="180" height="15" uuid="83d6a280-73eb-4bef-be48-ee3cf60d6825">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" isBold="true"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
+				</textElement>
+				<text><![CDATA[3. HÀNG TRẢ LẠI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="15" width="90" height="25" uuid="5b397d24-8300-4b57-8a20-d5328c1ca59b">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1666,7 +1763,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Lý do trả lại]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="90" y="345" width="60" height="25" uuid="e7b13187-c395-47e1-b97b-18e6d556b2f0">
+				<reportElement x="90" y="15" width="60" height="25" uuid="e7b13187-c395-47e1-b97b-18e6d556b2f0">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1684,7 +1781,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Số lượng]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="150" y="345" width="60" height="25" uuid="0f6f652e-9623-4847-8fad-4b5d5598580e">
+				<reportElement x="150" y="15" width="60" height="25" uuid="0f6f652e-9623-4847-8fad-4b5d5598580e">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1703,7 +1800,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="210" y="345" width="60" height="25" uuid="57b69e8a-cb01-4782-a16e-9a0b5d58da1e">
+				<reportElement x="210" y="15" width="50" height="25" uuid="57b69e8a-cb01-4782-a16e-9a0b5d58da1e">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1722,7 +1819,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="270" y="345" width="60" height="25" uuid="2d04ad13-6dde-4ac7-a987-baeb22a5c942">
+				<reportElement x="260" y="15" width="70" height="25" uuid="2d04ad13-6dde-4ac7-a987-baeb22a5c942">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1740,7 +1837,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Tổng vàng 18 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="330" y="345" width="60" height="25" uuid="c4da1bbf-aec8-49b0-8df3-32bb40516f6b">
+				<reportElement x="330" y="15" width="60" height="25" uuid="c4da1bbf-aec8-49b0-8df3-32bb40516f6b">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1759,7 +1856,7 @@ WHERE SO.id = $P{id}]]>
 (%)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="390" y="345" width="80" height="25" uuid="fc1068a2-9445-4692-b155-d87701efe310">
+				<reportElement x="390" y="15" width="80" height="25" uuid="fc1068a2-9445-4692-b155-d87701efe310">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1778,7 +1875,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="470" y="345" width="80" height="25" uuid="f0fbef0b-50b7-4e4d-93b3-747ff79873bf">
+				<reportElement x="470" y="15" width="80" height="25" uuid="f0fbef0b-50b7-4e4d-93b3-747ff79873bf">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1797,7 +1894,7 @@ WHERE SO.id = $P{id}]]>
 (Đồng)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="370" width="90" height="15" uuid="4327ab0b-7596-4163-9943-20e7431fc097">
+				<reportElement x="0" y="40" width="90" height="15" uuid="4327ab0b-7596-4163-9943-20e7431fc097">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1815,7 +1912,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Đồ đúc]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="385" width="90" height="15" uuid="a818034e-99a6-40c7-8a4c-33b5caab39d4">
+				<reportElement x="0" y="55" width="90" height="15" uuid="a818034e-99a6-40c7-8a4c-33b5caab39d4">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1833,7 +1930,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Đồ bộng]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="400" width="90" height="15" uuid="ca4c3cc3-6eb2-45c1-8096-c802a4ba0c7a">
+				<reportElement x="0" y="70" width="90" height="15" uuid="ca4c3cc3-6eb2-45c1-8096-c802a4ba0c7a">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1851,7 +1948,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Hàng khác]]></text>
 			</staticText>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="90" y="370" width="60" height="15" uuid="17f0536a-a586-49ad-badf-80df25040215">
+				<reportElement x="90" y="40" width="60" height="15" uuid="17f0536a-a586-49ad-badf-80df25040215">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1866,7 +1963,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r1_qty}!=0?$F{r1_qty}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="90" y="385" width="60" height="15" uuid="4fed5eb9-2438-424e-9edb-0979f81933e7">
+				<reportElement x="90" y="55" width="60" height="15" uuid="4fed5eb9-2438-424e-9edb-0979f81933e7">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1881,7 +1978,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r2_qty}!=0?$F{r2_qty}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="90" y="400" width="60" height="15" uuid="302beb43-5fb8-4017-b514-974470d24ea5">
+				<reportElement x="90" y="70" width="60" height="15" uuid="302beb43-5fb8-4017-b514-974470d24ea5">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1897,7 +1994,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r3_qty}!=0?$F{r3_qty}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="150" y="370" width="60" height="15" uuid="47bfec58-d002-4995-b133-6df1687c993a">
+				<reportElement x="150" y="40" width="60" height="15" uuid="47bfec58-d002-4995-b133-6df1687c993a">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1912,7 +2009,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r1_total_weight}!=0?$F{r1_total_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="150" y="385" width="60" height="15" uuid="f8b4de7e-c3c0-4bc0-a9b9-c2a26aeb6f45">
+				<reportElement x="150" y="55" width="60" height="15" uuid="f8b4de7e-c3c0-4bc0-a9b9-c2a26aeb6f45">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1927,7 +2024,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r2_total_weight}!=0?$F{r2_total_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="150" y="400" width="60" height="15" uuid="24b0c882-c822-47a6-8228-835478da529a">
+				<reportElement x="150" y="70" width="60" height="15" uuid="24b0c882-c822-47a6-8228-835478da529a">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1943,7 +2040,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r3_total_weight}!=0?$F{r3_total_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="210" y="370" width="60" height="15" uuid="32e9dbe7-c6ae-4c0b-a327-ca8f796a79ca">
+				<reportElement x="210" y="40" width="50" height="15" uuid="32e9dbe7-c6ae-4c0b-a327-ca8f796a79ca">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1958,7 +2055,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r1_total_gem_weight}!=0?$F{r1_total_gem_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="210" y="385" width="60" height="15" uuid="085ad632-df03-49ee-b97d-8a731014a55d">
+				<reportElement x="210" y="55" width="50" height="15" uuid="085ad632-df03-49ee-b97d-8a731014a55d">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1973,7 +2070,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r2_total_gem_weight}!=0?$F{r2_total_gem_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="210" y="400" width="60" height="15" uuid="b2db7aa9-2c71-4627-9811-4825e8039d65">
+				<reportElement x="210" y="70" width="50" height="15" uuid="b2db7aa9-2c71-4627-9811-4825e8039d65">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1989,7 +2086,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r3_total_gem_weight}!=0?$F{r3_total_gem_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="370" width="60" height="15" uuid="0ae0c17b-eca4-4400-85a2-d15abf37fae2">
+				<reportElement x="260" y="40" width="70" height="15" uuid="0ae0c17b-eca4-4400-85a2-d15abf37fae2">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2004,7 +2101,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r1_total_gold_weight}!=0?$F{r1_total_gold_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="385" width="60" height="15" uuid="8cdfce9f-b247-4068-8ea7-94f4aff86f6d">
+				<reportElement x="260" y="55" width="70" height="15" uuid="8cdfce9f-b247-4068-8ea7-94f4aff86f6d">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2019,7 +2116,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r2_total_gold_weight}!=0?$F{r2_total_gold_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="400" width="60" height="15" uuid="ff1562da-eae6-48a0-8e0c-b017a8d8773e">
+				<reportElement x="260" y="70" width="70" height="15" uuid="ff1562da-eae6-48a0-8e0c-b017a8d8773e">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2035,7 +2132,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r3_total_gold_weight}!=0?$F{r3_total_gold_weight}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="330" y="370" width="60" height="15" uuid="a36d3e11-af75-47ed-b8c4-3053615c17d4">
+				<reportElement x="330" y="40" width="60" height="15" uuid="a36d3e11-af75-47ed-b8c4-3053615c17d4">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2050,7 +2147,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r1_total_gold_age}!=0?$F{r1_total_gold_age}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="330" y="385" width="60" height="15" uuid="4ddcb50d-35bd-40dc-b0cf-e4414ddb6205">
+				<reportElement x="330" y="55" width="60" height="15" uuid="4ddcb50d-35bd-40dc-b0cf-e4414ddb6205">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2065,7 +2162,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r2_total_gold_age}!=0?$F{r2_total_gold_age}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="330" y="400" width="60" height="15" uuid="01ebe12e-33ff-495b-b21a-3749d84ae3dd">
+				<reportElement x="330" y="70" width="60" height="15" uuid="01ebe12e-33ff-495b-b21a-3749d84ae3dd">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2081,7 +2178,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r3_total_gold_age}!=0?$F{r3_total_gold_age}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="370" width="80" height="15" uuid="5559baab-52b9-4218-a1bc-f1350ef9bf5a">
+				<reportElement x="390" y="40" width="80" height="15" uuid="5559baab-52b9-4218-a1bc-f1350ef9bf5a">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2096,7 +2193,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{r1_total_gold_weight} * $F{r1_total_gold_age} / 100)!=0?($F{r1_total_gold_weight} * $F{r1_total_gold_age} / 100):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="385" width="80" height="15" uuid="4e487a17-5676-442e-a9b5-95da23c6efab">
+				<reportElement x="390" y="55" width="80" height="15" uuid="4e487a17-5676-442e-a9b5-95da23c6efab">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2111,7 +2208,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{r2_total_gold_weight} * $F{r2_total_gold_age} / 100)!=0?($F{r2_total_gold_weight} * $F{r2_total_gold_age} / 100):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="400" width="80" height="15" uuid="bbf7b7c4-1328-4cf0-9260-d190ef801992">
+				<reportElement x="390" y="70" width="80" height="15" uuid="bbf7b7c4-1328-4cf0-9260-d190ef801992">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2127,7 +2224,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{r3_total_gold_weight} * $F{r3_total_gold_age} / 100)!=0?($F{r3_total_gold_weight} * $F{r3_total_gold_age} / 100):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="470" y="370" width="80" height="15" uuid="0f4a023b-bfa3-4338-973e-f4f63fb9f063">
+				<reportElement x="470" y="40" width="80" height="15" uuid="0f4a023b-bfa3-4338-973e-f4f63fb9f063">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2142,7 +2239,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r1_total_wage}!=0?$F{r1_total_wage}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="470" y="385" width="80" height="15" uuid="c75ccdae-d91b-4d35-888c-630fd4dc5523">
+				<reportElement x="470" y="55" width="80" height="15" uuid="c75ccdae-d91b-4d35-888c-630fd4dc5523">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2157,7 +2254,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r2_total_wage}!=0?$F{r2_total_wage}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="470" y="400" width="80" height="15" uuid="48007c73-78f2-4b19-9725-979bc833b3cc">
+				<reportElement x="470" y="70" width="80" height="15" uuid="48007c73-78f2-4b19-9725-979bc833b3cc">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2173,7 +2270,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[$F{r3_total_wage}!=0?$F{r3_total_wage}:null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="415" width="90" height="15" uuid="e7412e50-8078-4d43-a78d-a7864d0e8f80">
+				<reportElement x="0" y="85" width="90" height="15" uuid="e7412e50-8078-4d43-a78d-a7864d0e8f80">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2191,7 +2288,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Tổng cộng]]></text>
 			</staticText>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="90" y="415" width="60" height="15" uuid="6527a0aa-b3e5-4d61-9c91-77138a7c12ee">
+				<reportElement x="90" y="85" width="60" height="15" uuid="6527a0aa-b3e5-4d61-9c91-77138a7c12ee">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2208,7 +2305,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{r1_qty} + $F{r2_qty} + $F{r3_qty})!=0?($F{r1_qty} + $F{r2_qty} + $F{r3_qty}):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="150" y="415" width="60" height="15" uuid="c4c68108-fa0e-4b2e-8f97-6f5f817e1af5">
+				<reportElement x="150" y="85" width="60" height="15" uuid="c4c68108-fa0e-4b2e-8f97-6f5f817e1af5">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2225,7 +2322,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{r1_total_weight} + $F{r2_total_weight} + $F{r3_total_weight})!=0?($F{r1_total_weight} + $F{r2_total_weight} + $F{r3_total_weight}):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="210" y="415" width="60" height="15" uuid="70c3e88b-d2fb-44b4-b53d-1f5307938094">
+				<reportElement x="210" y="85" width="50" height="15" uuid="70c3e88b-d2fb-44b4-b53d-1f5307938094">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2242,7 +2339,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{r1_total_gem_weight} + $F{r2_total_gem_weight} + $F{r3_total_gem_weight})!=0?($F{r1_total_gem_weight} + $F{r2_total_gem_weight} + $F{r3_total_gem_weight}):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="415" width="60" height="15" uuid="93ca0eda-7ca9-4980-a9c8-07a734c191ff">
+				<reportElement x="260" y="85" width="70" height="15" uuid="93ca0eda-7ca9-4980-a9c8-07a734c191ff">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2259,7 +2356,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{r1_total_gold_weight} + $F{r2_total_gold_weight} + $F{r3_total_gold_weight})!=0?($F{r1_total_gold_weight} + $F{r2_total_gold_weight} + $F{r3_total_gold_weight}):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="415" width="80" height="15" uuid="c45d148f-1135-4de3-8ca6-8e8cdd5af7af">
+				<reportElement x="390" y="85" width="80" height="15" uuid="c45d148f-1135-4de3-8ca6-8e8cdd5af7af">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2277,7 +2374,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{r1_total_gold_weight} * $F{r1_total_gold_age} / 100 + $F{r2_total_gold_weight} * $F{r2_total_gold_age} / 100 + $F{r3_total_gold_weight} * $F{r3_total_gold_age} / 100)!=0?($F{r1_total_gold_weight} * $F{r1_total_gold_age} / 100 + $F{r2_total_gold_weight} * $F{r2_total_gold_age} / 100 + $F{r3_total_gold_weight} * $F{r3_total_gold_age} / 100):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="470" y="415" width="80" height="15" uuid="f3d49291-681f-4b82-b236-f0295a2dc330">
+				<reportElement x="470" y="85" width="80" height="15" uuid="f3d49291-681f-4b82-b236-f0295a2dc330">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2295,7 +2392,7 @@ WHERE SO.id = $P{id}]]>
 				<textFieldExpression><![CDATA[($F{r1_total_wage} + $F{r2_total_wage} + $F{r3_total_wage})!=0?($F{r1_total_wage} + $F{r2_total_wage} + $F{r3_total_wage}):null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="330" y="415" width="60" height="15" uuid="0bd44e31-77f8-4615-a907-7bb5b13fb095">
+				<reportElement x="330" y="85" width="60" height="15" uuid="0bd44e31-77f8-4615-a907-7bb5b13fb095">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2306,8 +2403,10 @@ WHERE SO.id = $P{id}]]>
 				</box>
 				<text><![CDATA[]]></text>
 			</staticText>
+		</band>
+		<band height="117">
 			<staticText>
-				<reportElement x="0" y="437" width="180" height="15" uuid="ef09da34-af22-49b3-8ad0-f4e0d71e59e9">
+				<reportElement x="0" y="0" width="180" height="15" uuid="ef09da34-af22-49b3-8ad0-f4e0d71e59e9">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
@@ -2317,7 +2416,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[4. PHẢI THU]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="452" width="150" height="15" uuid="2654ca48-4726-42ae-ba3f-68afc9beeac1">
+				<reportElement x="0" y="15" width="150" height="15" uuid="2654ca48-4726-42ae-ba3f-68afc9beeac1">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2335,7 +2434,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Công nợ cũ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="467" width="90" height="25" uuid="41fbb085-9bf4-4cde-844c-c37b98692815">
+				<reportElement x="0" y="30" width="90" height="25" uuid="41fbb085-9bf4-4cde-844c-c37b98692815">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2352,7 +2451,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="90" y="467" width="60" height="25" uuid="3004fe7f-9838-4fc2-a633-fcfe6659dc70">
+				<reportElement x="90" y="30" width="60" height="25" uuid="3004fe7f-9838-4fc2-a633-fcfe6659dc70">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2369,7 +2468,7 @@ WHERE SO.id = $P{id}]]>
 (Đồng)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="150" y="452" width="120" height="15" uuid="07263166-8d5b-4206-a949-7b260df03592">
+				<reportElement x="150" y="15" width="110" height="15" uuid="07263166-8d5b-4206-a949-7b260df03592">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2387,7 +2486,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Giảm trừ hàng trả lại]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="150" y="467" width="60" height="25" uuid="4f97f8c2-f28a-46b2-9f26-50a45af2b611">
+				<reportElement x="150" y="30" width="60" height="25" uuid="4f97f8c2-f28a-46b2-9f26-50a45af2b611">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2404,7 +2503,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="210" y="467" width="60" height="25" uuid="bb0a69bc-5ae8-4c39-b49d-00f2bf0091a2">
+				<reportElement x="210" y="30" width="50" height="25" uuid="bb0a69bc-5ae8-4c39-b49d-00f2bf0091a2">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2421,7 +2520,7 @@ WHERE SO.id = $P{id}]]>
 (Đồng)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="270" y="452" width="120" height="15" uuid="aed2e727-f0a1-41a3-be27-fdde5df03a05">
+				<reportElement x="260" y="15" width="130" height="15" uuid="aed2e727-f0a1-41a3-be27-fdde5df03a05">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2439,7 +2538,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Hàng bán mới]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="270" y="467" width="60" height="25" uuid="87988c6e-e8d3-4fee-a3ee-fd582aab9515">
+				<reportElement x="260" y="30" width="70" height="25" uuid="87988c6e-e8d3-4fee-a3ee-fd582aab9515">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2456,7 +2555,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="330" y="467" width="60" height="25" uuid="7d3644e0-e460-4d8b-be47-c253b93ea51b">
+				<reportElement x="330" y="30" width="60" height="25" uuid="7d3644e0-e460-4d8b-be47-c253b93ea51b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2473,7 +2572,7 @@ WHERE SO.id = $P{id}]]>
 (Đồng)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="390" y="452" width="160" height="15" uuid="e57f4e7a-4b85-4df0-9f5c-c0e4385a334d">
+				<reportElement x="390" y="15" width="160" height="15" uuid="e57f4e7a-4b85-4df0-9f5c-c0e4385a334d">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2491,7 +2590,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Tổng cộng phải thu]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="390" y="467" width="80" height="25" uuid="ce999287-ba9d-40c9-ab58-1cfa7c87d933">
+				<reportElement x="390" y="30" width="80" height="25" uuid="ce999287-ba9d-40c9-ab58-1cfa7c87d933">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2508,7 +2607,7 @@ WHERE SO.id = $P{id}]]>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="470" y="467" width="80" height="25" uuid="b67c84ba-6b82-4232-babf-b7b98953fdcf">
+				<reportElement x="470" y="30" width="80" height="25" uuid="b67c84ba-6b82-4232-babf-b7b98953fdcf">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2524,20 +2623,8 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Tiền công
 (Đồng)]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="0" y="268" width="180" height="15" uuid="c3d11805-26e2-4351-8797-0523cda5ae9c">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
-					<font fontName="Arial" isBold="true"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
-				</textElement>
-				<text><![CDATA[2. CÔNG NỢ CŨ (SAU PHỔ)]]></text>
-			</staticText>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="90" y="492" width="60" height="15" uuid="ee6b43fb-2069-4a0d-ae4f-0d68164ebf0e">
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				<reportElement x="90" y="55" width="60" height="15" uuid="ee6b43fb-2069-4a0d-ae4f-0d68164ebf0e">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -2547,15 +2634,13 @@ WHERE SO.id = $P{id}]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial"/>
-					<paragraph leftIndent="5" rightIndent="5"/>
+					<font fontName="Arial" size="9"/>
+					<paragraph leftIndent="2" rightIndent="1"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{wage}!=0?$F{wage}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="0" y="492" width="90" height="15" uuid="8023a610-9849-426a-9fb8-bb4deaf1aee8">
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				<reportElement x="0" y="55" width="90" height="15" uuid="8023a610-9849-426a-9fb8-bb4deaf1aee8">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -2565,15 +2650,13 @@ WHERE SO.id = $P{id}]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial"/>
-					<paragraph leftIndent="5" rightIndent="5"/>
+					<font fontName="Arial" size="9"/>
+					<paragraph leftIndent="2" rightIndent="1"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{exchange_g10}!=0?$F{exchange_g10}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="210" y="492" width="60" height="15" uuid="97bc36ab-fef0-48bd-afab-3ce8635ba7c1">
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<reportElement x="210" y="55" width="50" height="15" uuid="97bc36ab-fef0-48bd-afab-3ce8635ba7c1">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2583,14 +2666,13 @@ WHERE SO.id = $P{id}]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph leftIndent="5" rightIndent="5"/>
+					<font fontName="Arial" size="9"/>
+					<paragraph leftIndent="2" rightIndent="1"/>
 				</textElement>
 				<textFieldExpression><![CDATA[(-1 * ($F{r1_total_wage} + $F{r2_total_wage} + $F{r3_total_wage}))!=0?(-1 * ($F{r1_total_wage} + $F{r2_total_wage} + $F{r3_total_wage})):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="150" y="492" width="60" height="15" uuid="b66172f6-9dbb-45cb-84b4-952b4d31a841">
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<reportElement x="150" y="55" width="60" height="15" uuid="b66172f6-9dbb-45cb-84b4-952b4d31a841">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2600,14 +2682,13 @@ WHERE SO.id = $P{id}]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph leftIndent="5" rightIndent="5"/>
+					<font fontName="Arial" size="9"/>
+					<paragraph leftIndent="2" rightIndent="1"/>
 				</textElement>
 				<textFieldExpression><![CDATA[(-1 * ($F{r1_total_gold_weight} * $F{r1_total_gold_age} / 100 + $F{r2_total_gold_weight} * $F{r2_total_gold_age} / 100 + $F{r3_total_gold_weight} * $F{r3_total_gold_age} / 100))!=0?(-1 * ($F{r1_total_gold_weight} * $F{r1_total_gold_age} / 100 + $F{r2_total_gold_weight} * $F{r2_total_gold_age} / 100 + $F{r3_total_gold_weight} * $F{r3_total_gold_age} / 100)):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="270" y="492" width="60" height="15" uuid="1f79b5bf-fca0-4760-9fe1-2b28f3d07dde">
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<reportElement x="260" y="55" width="70" height="15" uuid="1f79b5bf-fca0-4760-9fe1-2b28f3d07dde">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2617,15 +2698,16 @@ WHERE SO.id = $P{id}]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph leftIndent="5" rightIndent="5"/>
+					<font fontName="Arial" size="9"/>
+					<paragraph leftIndent="2" rightIndent="1"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{d1_total_gold_weight} * $F{gold_age_1} / 100 + $F{d2_total_gold_weight} * $F{gold_age_2} / 100 + $F{d3_total_gold_weight} * $F{gold_age_3} / 100)!=0?($F{d1_total_gold_weight} * $F{gold_age_1} / 100 + $F{d2_total_gold_weight} * $F{gold_age_2} / 100 + $F{d3_total_gold_weight} * $F{gold_age_3} / 100):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="330" y="492" width="60" height="15" uuid="7e691635-b5cd-4d0d-900e-9dbca90a4e5a">
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<reportElement x="330" y="55" width="60" height="15" uuid="7e691635-b5cd-4d0d-900e-9dbca90a4e5a">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0"/>
@@ -2634,14 +2716,13 @@ WHERE SO.id = $P{id}]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph leftIndent="5" rightIndent="5"/>
+					<font fontName="Arial" size="9"/>
+					<paragraph leftIndent="2" rightIndent="1"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage})!=0?($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}):null]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage} - (($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100) - $F{reduce})!=0?($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage} - (($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100) - $F{reduce}):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="492" width="80" height="15" uuid="60e912fa-1766-454e-baf8-aa8fe93fdf10">
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<reportElement x="390" y="55" width="80" height="15" uuid="60e912fa-1766-454e-baf8-aa8fe93fdf10">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2651,15 +2732,13 @@ WHERE SO.id = $P{id}]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
-					<paragraph leftIndent="5" rightIndent="5"/>
+					<font fontName="Arial" size="9" isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="1"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{exchange_g10} - ($F{r1_total_gold_weight} * $F{r1_total_gold_age} / 100 + $F{r2_total_gold_weight} * $F{r2_total_gold_age} / 100 + $F{r3_total_gold_weight} * $F{r3_total_gold_age} / 100)  + ($F{d1_total_gold_weight} * $F{gold_age_1} / 100 + $F{d2_total_gold_weight} * $F{gold_age_2} / 100 + $F{d3_total_gold_weight} * $F{gold_age_3} / 100))!=0?($F{exchange_g10} - ($F{r1_total_gold_weight} * $F{r1_total_gold_age} / 100 + $F{r2_total_gold_weight} * $F{r2_total_gold_age} / 100 + $F{r3_total_gold_weight} * $F{r3_total_gold_age} / 100)  + ($F{d1_total_gold_weight} * $F{gold_age_1} / 100 + $F{d2_total_gold_weight} * $F{gold_age_2} / 100 + $F{d3_total_gold_weight} * $F{gold_age_3} / 100)):null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="470" y="492" width="80" height="15" uuid="786679e2-9b9f-44be-a14b-731dfbfcde2e">
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<reportElement x="470" y="55" width="80" height="15" uuid="786679e2-9b9f-44be-a14b-731dfbfcde2e">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2669,13 +2748,13 @@ WHERE SO.id = $P{id}]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font isBold="true"/>
-					<paragraph leftIndent="5" rightIndent="5"/>
+					<font fontName="Arial" size="9" isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="1"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{wage} - ($F{r1_total_wage} + $F{r2_total_wage} + $F{r3_total_wage}) + ($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}))!=0?($F{wage} - ($F{r1_total_wage} + $F{r2_total_wage} + $F{r3_total_wage}) + ($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage})):null]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{wage} - ($F{r1_total_wage} + $F{r2_total_wage} + $F{r3_total_wage}) + ($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage} - (($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100) - $F{reduce}))!=0?($F{wage} - ($F{r1_total_wage} + $F{r2_total_wage} + $F{r3_total_wage}) + ($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage} - (($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100) - $F{reduce})):null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="513" width="320" height="15" uuid="928fc0b0-c908-4e6d-bdcd-cdbe1b95e3b5">
+				<reportElement x="0" y="76" width="320" height="15" uuid="928fc0b0-c908-4e6d-bdcd-cdbe1b95e3b5">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
@@ -2685,7 +2764,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[5. THANH TOÁN (TẠM TÍNH TRƯỚC KHI CÓ KẾT QUẢ PHỔ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="350" y="528" width="60" height="25" uuid="9ecd5d53-31da-4033-8dc9-787164f22b5f">
+				<reportElement x="330" y="91" width="60" height="25" uuid="9ecd5d53-31da-4033-8dc9-787164f22b5f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2702,7 +2781,7 @@ WHERE SO.id = $P{id}]]>
 Giá quy đổi]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="410" y="528" width="70" height="25" uuid="a416b593-31ba-4923-9036-6b48e97785c1">
+				<reportElement x="390" y="91" width="80" height="25" uuid="a416b593-31ba-4923-9036-6b48e97785c1">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2721,7 +2800,7 @@ Giá quy đổi]]></text>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="210" y="528" width="60" height="25" uuid="08ab6790-3d8e-4d36-b076-f475d1735d3d">
+				<reportElement x="210" y="91" width="50" height="25" uuid="08ab6790-3d8e-4d36-b076-f475d1735d3d">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2740,7 +2819,7 @@ Giá quy đổi]]></text>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="480" y="528" width="70" height="25" uuid="d6c2325b-43be-4313-99cb-9a7efd72dc92">
+				<reportElement x="470" y="91" width="80" height="25" uuid="d6c2325b-43be-4313-99cb-9a7efd72dc92">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2759,7 +2838,7 @@ Giá quy đổi]]></text>
 (Đồng)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="528" width="90" height="25" uuid="ce457f68-a8dc-49e0-8870-69f6748b33d7">
+				<reportElement x="0" y="91" width="90" height="25" uuid="ce457f68-a8dc-49e0-8870-69f6748b33d7">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2777,7 +2856,7 @@ Giá quy đổi]]></text>
 				<text><![CDATA[Hình thức thu]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="270" y="528" width="80" height="25" uuid="39c87ed3-1e72-4a84-897a-2f39f4678b06">
+				<reportElement x="260" y="91" width="70" height="25" uuid="39c87ed3-1e72-4a84-897a-2f39f4678b06">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -2790,11 +2869,11 @@ Giá quy đổi]]></text>
 					<font fontName="Arial" size="10" isBold="true"/>
 					<paragraph leftIndent="2" rightIndent="2" spacingBefore="2" spacingAfter="2"/>
 				</textElement>
-				<text><![CDATA[Tổng vàng (chỉ)
-Tiền mặt (đ)]]></text>
+				<text><![CDATA[Tổng vàng/
+Tiền mặt]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="90" y="528" width="60" height="25" uuid="3bbf895e-b3bc-44ce-8ca4-74dc5faa6f22">
+				<reportElement x="90" y="91" width="60" height="25" uuid="3bbf895e-b3bc-44ce-8ca4-74dc5faa6f22">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2812,7 +2891,7 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[Số lượng]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="150" y="528" width="60" height="25" uuid="da9f14ba-2cfa-4bf3-a206-4741caee9579">
+				<reportElement x="150" y="91" width="60" height="25" uuid="da9f14ba-2cfa-4bf3-a206-4741caee9579">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2830,42 +2909,9 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[Tổng cân
 (Chỉ)]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="150" y="200" width="180" height="31" uuid="f89ad736-6dd2-4552-9801-63f13a3a8d2b">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="200" width="160" height="15" uuid="f861a35e-9428-47ca-9a92-4e10a34a0092">
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph leftIndent="5" rightIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[(($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100)!=0?(($F{d1_total_wage} + $F{d2_total_wage} + $F{d3_total_wage}) * $F{sampling_discount} / 100):null]]></textFieldExpression>
-			</textField>
 		</band>
-	</title>
-	<columnHeader>
-		<band splitType="Stretch"/>
-	</columnHeader>
-	<detail>
 		<band height="21" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{pay_total_exchange_g10}!=0]]></printWhenExpression>
 			<componentElement>
 				<reportElement stretchType="ContainerHeight" x="0" y="0" width="550" height="21" uuid="2f764081-bec3-4fe4-b913-3a61fec94451">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
@@ -2901,11 +2947,11 @@ Tiền mặt (đ)]]></text>
 									<font fontName="Arial"/>
 									<paragraph leftIndent="5" rightIndent="5"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{pay_method}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{pay_method_id} == 1 ? "Thảo" : ($F{pay_method_id} == 2 ? "Dẻ" : ($F{pay_method_id} == 3 ? "Tiền mặt" : ($F{pay_method_id} == 4 ? "Đúc" : "Bộng")))]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="180" uuid="6ed6a821-774f-4efb-8e3a-d6f9451b0751">
+					<jr:column width="170" uuid="6ed6a821-774f-4efb-8e3a-d6f9451b0751">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 						<jr:detailCell style="Table_TD" height="20">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2914,6 +2960,7 @@ Tiền mặt (đ)]]></text>
 								<reportElement x="0" y="0" width="60" height="20" uuid="e17865fa-ed68-427f-973d-c31ad21297bb">
 									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 									<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+									<printWhenExpression><![CDATA[$F{pay_method_id}!=3]]></printWhenExpression>
 								</reportElement>
 								<box>
 									<topPen lineWidth="1.0"/>
@@ -2931,6 +2978,7 @@ Tiền mặt (đ)]]></text>
 								<reportElement x="60" y="0" width="60" height="20" uuid="85101acd-fcfa-4fd3-bc28-091a60c11534">
 									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 									<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+									<printWhenExpression><![CDATA[$F{pay_method_id}!=3]]></printWhenExpression>
 								</reportElement>
 								<box>
 									<topPen lineWidth="1.0"/>
@@ -2945,9 +2993,10 @@ Tiền mặt (đ)]]></text>
 								<textFieldExpression><![CDATA[OR(EQUALS($F{pay_method_id}, 4), EQUALS($F{pay_method_id}, 5)) ? ($F{total_weight}!=0?$F{total_weight}:null) : null]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0.###" isBlankWhenNull="true">
-								<reportElement x="120" y="0" width="60" height="20" uuid="ec50cf9f-2a07-4851-abbf-2a5c2a75f0ed">
+								<reportElement x="120" y="0" width="50" height="20" uuid="ec50cf9f-2a07-4851-abbf-2a5c2a75f0ed">
 									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 									<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+									<printWhenExpression><![CDATA[$F{pay_method_id}!=3]]></printWhenExpression>
 								</reportElement>
 								<box>
 									<topPen lineWidth="1.0"/>
@@ -2962,7 +3011,7 @@ Tiền mặt (đ)]]></text>
 								<textFieldExpression><![CDATA[OR(EQUALS($F{pay_method_id}, 4), EQUALS($F{pay_method_id}, 5)) ? ($F{gem_weight}!=0?$F{gem_weight}:null) : null]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0.###" isBlankWhenNull="true">
-								<reportElement style="Table_TD" x="0" y="0" width="180" height="20" uuid="6b685a22-aa98-4861-a36f-746e39897c4d">
+								<reportElement style="Table_TD" x="0" y="0" width="170" height="20" uuid="6b685a22-aa98-4861-a36f-746e39897c4d">
 									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 									<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 									<printWhenExpression><![CDATA[$F{pay_method_id}==3]]></printWhenExpression>
@@ -2981,14 +3030,11 @@ Tiền mặt (đ)]]></text>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="80" uuid="2db27019-9e15-40df-9580-e47cb16b8848">
+					<jr:column width="70" uuid="2db27019-9e15-40df-9580-e47cb16b8848">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
 						<jr:detailCell style="Table_TD" height="20">
 							<textField pattern="#,##0.###" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="80" height="20" uuid="fdbd4ee0-1dcb-4c19-951b-208921c8882c">
-									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-									<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-								</reportElement>
+								<reportElement x="0" y="0" width="70" height="20" uuid="fdbd4ee0-1dcb-4c19-951b-208921c8882c"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -2996,10 +3042,10 @@ Tiền mặt (đ)]]></text>
 									<rightPen lineWidth="1.0"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial"/>
-									<paragraph leftIndent="5" rightIndent="5"/>
+									<font fontName="Arial" size="9"/>
+									<paragraph leftIndent="2" rightIndent="1"/>
 								</textElement>
-								<textFieldExpression><![CDATA[OR(EQUALS($F{pay_method_id},1), EQUALS($F{pay_method_id},2)) ? $F{gold_weight} : 
+								<textFieldExpression><![CDATA[OR(EQUALS($F{pay_method_id},1), EQUALS($F{pay_method_id},2), EQUALS($F{pay_method_id},4), EQUALS($F{pay_method_id},5)) ? $F{gold_weight} : 
 (EQUALS($F{pay_method_id},3) ? ($F{money}!=0?$F{money}:null) : null)]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -3026,11 +3072,11 @@ Tiền mặt (đ)]]></text>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="70" uuid="d56cb18e-da23-47db-9083-a2579ded96f0">
+					<jr:column width="80" uuid="d56cb18e-da23-47db-9083-a2579ded96f0">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
 						<jr:detailCell style="Table_TD" height="20">
 							<textField pattern="#,##0.###" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="70" height="20" uuid="093bee67-8ab5-4b86-8e00-68e3cbc59068">
+								<reportElement x="0" y="0" width="80" height="20" uuid="093bee67-8ab5-4b86-8e00-68e3cbc59068">
 									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 									<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 								</reportElement>
@@ -3041,18 +3087,18 @@ Tiền mặt (đ)]]></text>
 									<rightPen lineWidth="1.0"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font fontName="Arial"/>
+									<font fontName="Arial" size="10" isBold="false"/>
 									<paragraph leftIndent="5" rightIndent="5"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{exchange_g10}!=0?$F{exchange_g10}:null]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="70" uuid="d8bac8a8-71af-414c-b57b-d981b228a97b">
+					<jr:column width="80" uuid="d8bac8a8-71af-414c-b57b-d981b228a97b">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
 						<jr:detailCell style="Table_TD" height="20">
 							<staticText>
-								<reportElement x="0" y="0" width="70" height="20" uuid="c123c7ff-e5e2-41ee-81db-a1cfd3e15448"/>
+								<reportElement x="0" y="0" width="80" height="20" uuid="c123c7ff-e5e2-41ee-81db-a1cfd3e15448"/>
 								<box>
 									<topPen lineWidth="1.0"/>
 									<leftPen lineWidth="1.0"/>
@@ -3066,11 +3112,9 @@ Tiền mặt (đ)]]></text>
 				</jr:table>
 			</componentElement>
 		</band>
-	</detail>
-	<summary>
-		<band height="249" splitType="Stretch">
+		<band height="241">
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="480" y="0" width="70" height="15" uuid="78b7778a-a284-4b7e-ba0e-b80e348fe827">
+				<reportElement x="470" y="0" width="80" height="15" uuid="78b7778a-a284-4b7e-ba0e-b80e348fe827">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3088,7 +3132,7 @@ Tiền mặt (đ)]]></text>
 				<textFieldExpression><![CDATA[$F{pay_total_wage}!=0?$F{pay_total_wage}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="410" y="0" width="70" height="15" uuid="de1094da-a7c9-4c0c-9e94-fe50beef9752">
+				<reportElement x="390" y="0" width="80" height="15" uuid="de1094da-a7c9-4c0c-9e94-fe50beef9752">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3106,7 +3150,7 @@ Tiền mặt (đ)]]></text>
 				<textFieldExpression><![CDATA[$F{pay_total_exchange_g10}!=0?$F{pay_total_exchange_g10}:null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="90" y="0" width="320" height="15" uuid="b88f786b-526a-4d1d-9ce9-5bf017d0924c">
+				<reportElement x="90" y="0" width="300" height="15" uuid="b88f786b-526a-4d1d-9ce9-5bf017d0924c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -3136,17 +3180,7 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[Tổng cộng]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="22" width="320" height="15" uuid="eabdb49c-76af-4449-8a66-76824d568046">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
-					<font fontName="Arial" isBold="true"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
-				</textElement>
-				<text><![CDATA[6. CÔNG NỢ CUỐI (TẠM TÍNH TRƯỚC KHI CÓ KẾT QUẢ PHỔ)]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="470" y="42" width="80" height="25" uuid="eefb4f9d-68cc-4d97-a379-911793c9092f">
+				<reportElement x="470" y="64" width="80" height="25" uuid="eefb4f9d-68cc-4d97-a379-911793c9092f">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3165,7 +3199,7 @@ Tiền mặt (đ)]]></text>
 (Đồng)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="390" y="42" width="80" height="25" uuid="d7945257-5fb0-489d-a6bd-cf35b0d20c1e">
+				<reportElement x="390" y="64" width="80" height="25" uuid="d7945257-5fb0-489d-a6bd-cf35b0d20c1e">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3184,7 +3218,7 @@ Tiền mặt (đ)]]></text>
 (Chỉ)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="320" y="42" width="70" height="25" uuid="d4eb12b3-f855-4bcd-809f-ac39681bbe1c">
+				<reportElement x="330" y="64" width="60" height="25" uuid="d4eb12b3-f855-4bcd-809f-ac39681bbe1c">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3202,7 +3236,7 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[Ngày thu]]></text>
 			</staticText>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="470" y="67" width="80" height="15" uuid="f22f7b00-88e0-4b6b-89b1-1c419870ebce">
+				<reportElement x="470" y="89" width="80" height="15" uuid="f22f7b00-88e0-4b6b-89b1-1c419870ebce">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3220,7 +3254,7 @@ Tiền mặt (đ)]]></text>
 				<textFieldExpression><![CDATA[$F{total_wage}!=0?$F{total_wage}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
-				<reportElement x="390" y="67" width="80" height="15" uuid="a8554cc5-917e-444f-b377-8ec0c600381a">
+				<reportElement x="390" y="89" width="80" height="15" uuid="a8554cc5-917e-444f-b377-8ec0c600381a">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3238,9 +3272,7 @@ Tiền mặt (đ)]]></text>
 				<textFieldExpression><![CDATA[$F{total_exchange_g10}!=0?$F{total_exchange_g10}:null]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="320" y="67" width="70" height="15" uuid="aa57f5c1-fe87-44c0-a12f-711e8aacfb56">
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				<reportElement x="330" y="89" width="60" height="15" uuid="aa57f5c1-fe87-44c0-a12f-711e8aacfb56">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -3249,14 +3281,14 @@ Tiền mặt (đ)]]></text>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial"/>
-					<paragraph leftIndent="5" rightIndent="5"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pay_date}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="42" width="320" height="40" uuid="0d0963c2-2dcd-4e6a-bc26-3bcb82898697">
+				<reportElement x="0" y="64" width="330" height="40" uuid="0d0963c2-2dcd-4e6a-bc26-3bcb82898697">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
@@ -3273,7 +3305,7 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[Công nợ này là tạm tính trước khi có kết quả phổ từ công ty Việt Ngọc]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="89" width="60" height="15" uuid="ec64db6d-ac13-4f59-99af-4e73d2396589">
+				<reportElement x="0" y="111" width="60" height="15" uuid="ec64db6d-ac13-4f59-99af-4e73d2396589">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3289,7 +3321,7 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[GHI CHÚ:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="60" y="89" width="490" height="15" uuid="9cfc8308-850c-450c-8b42-f5d9de665f35">
+				<reportElement x="60" y="111" width="490" height="15" uuid="9cfc8308-850c-450c-8b42-f5d9de665f35">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -3304,7 +3336,7 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[Giá trên chưa bao gồm thuế GTGT.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="104" width="550" height="15" uuid="a4f0da5b-75ef-454e-b878-29d9bdd73ca7">
+				<reportElement x="0" y="126" width="550" height="15" uuid="a4f0da5b-75ef-454e-b878-29d9bdd73ca7">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3322,56 +3354,24 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[- Lý do chưa thu hết công nợ cũ/tiền công:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="120" width="550" height="15" uuid="87e342e5-c355-42b7-9bca-d2054a41d79a">
+				<reportElement x="0" y="142" width="550" height="15" uuid="87e342e5-c355-42b7-9bca-d2054a41d79a">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Arial"/>
 					<paragraph leftIndent="15" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{reason_pay_not_enough}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="0" y="135" width="550" height="15" uuid="cf0b3bd3-0593-4c4e-abaf-45295059c170">
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" isBold="false" isItalic="false" isUnderline="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
-				</textElement>
-				<text><![CDATA[- Hàng khách đặt:]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="150" width="550" height="15" uuid="ba79ef04-776f-4254-91f8-9edf74291fd5">
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle" markup="none">
-					<paragraph leftIndent="15" rightIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{other_orders}]]></textFieldExpression>
-			</textField>
 			<textField>
-				<reportElement x="280" y="165" width="240" height="15" uuid="b9a91522-f0a5-4fc8-bf84-6f5c105cf306">
+				<reportElement x="280" y="160" width="240" height="15" uuid="b9a91522-f0a5-4fc8-bf84-6f5c105cf306">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3383,12 +3383,13 @@ Tiền mặt (đ)]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial"/>
 					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Ngày " + DATEFORMAT($F{order_date}, "dd") + " tháng " + DATEFORMAT($F{order_date}, "MM") + " năm " + DATEFORMAT($F{order_date}, "yyyy")]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="360" y="180" width="190" height="15" uuid="bed9b5bd-af8f-4264-bbd0-eb81805e015d">
+				<reportElement x="360" y="175" width="190" height="15" uuid="bed9b5bd-af8f-4264-bbd0-eb81805e015d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
@@ -3398,7 +3399,7 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[NHÂN VIÊN BÁN HÀNG]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="180" y="180" width="180" height="15" uuid="152d2d9e-7eaf-496c-a497-16f8dd508d69">
+				<reportElement x="180" y="175" width="180" height="15" uuid="152d2d9e-7eaf-496c-a497-16f8dd508d69">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
@@ -3408,7 +3409,7 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[KẾ TOÁN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="180" width="180" height="15" uuid="37ced183-cbcd-4665-999e-a1c1d0b997b1">
+				<reportElement x="0" y="175" width="180" height="15" uuid="37ced183-cbcd-4665-999e-a1c1d0b997b1">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
@@ -3418,7 +3419,7 @@ Tiền mặt (đ)]]></text>
 				<text><![CDATA[KHÁCH HÀNG]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="360" y="232" width="190" height="15" uuid="dc5f791b-c9c5-4ea7-9079-bf2b1b50c687">
+				<reportElement x="360" y="224" width="190" height="15" uuid="dc5f791b-c9c5-4ea7-9079-bf2b1b50c687">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -3435,6 +3436,52 @@ Tiền mặt (đ)]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{saler_name}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="44" width="320" height="15" uuid="eabdb49c-76af-4449-8a66-76824d568046">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" isBold="true"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
+				</textElement>
+				<text><![CDATA[6. CÔNG NỢ CUỐI (TẠM TÍNH TRƯỚC KHI CÓ KẾT QUẢ PHỔ)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="15" width="390" height="15" uuid="f66f9d46-f127-4a25-8f7a-9235a2f342de">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+					<paragraph leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Tổng tiền vàng và tiền công thanh toán]]></text>
+			</staticText>
+			<textField pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement x="390" y="15" width="160" height="15" uuid="70a9d298-85c6-4a3c-9b5e-915ecb00292e">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+					<paragraph leftIndent="5" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pay_total_money_and_wage}!=0?$F{pay_total_money_and_wage}:null]]></textFieldExpression>
+			</textField>
 		</band>
-	</summary>
+	</detail>
 </jasperReport>

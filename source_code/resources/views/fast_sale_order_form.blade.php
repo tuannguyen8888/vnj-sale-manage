@@ -462,13 +462,13 @@
             });
             let todayStr = moment().format('DD/MM/YYYY');
             if($('#order_date').val() == ''){
-                $('#order_date').val(todayStr);
+                $('#order_date').val(moment().format('DD/MM/YYYY HH:mm:ss'));
             }
             if($('#pay_date').val() == ''){
                 $('#pay_date').val(todayStr);
             }
-            $('#order_date').datepicker({
-                format:'dd/mm/yyyy',
+            $('#order_date').datetimepicker({
+                format:'d/m/Y H:i:s',
                 autoclose:true,
                 todayHighlight:true,
                 showOnFocus:false
@@ -525,6 +525,7 @@
                         customer_code: customer_code,
                         _token: '{{ csrf_token() }}'
                     },
+                    dataType: "json",
                     async: true,
                     success: function (data) {
                         if (data){
@@ -634,6 +635,7 @@
                                 bar_code: bar_code,
                                 _token: '{{ csrf_token() }}'
                             },
+                            dataType: "json",
                             async: true,
                             success: function (data) {
                                 if (data && data.product) {
@@ -707,6 +709,8 @@
                 $(`#exchange_g10_${detail.id}`).html(detail.exchange_g10?detail.exchange_g10.toLocaleString('en-US'):'');
             })
             valid_actual_weight();
+            calcTotalOfSaleOrderDetails();
+            calcTotalSaleOrder();
         }
         function calcTotalOfSaleOrderDetails() {
             total_order = {
@@ -971,6 +975,7 @@
         function pays_change(index) {
             let payDetail = order_pays[index];
             payDetail.qty = Number($(`#pay${index}_qty`).val()?$(`#pay${index}_qty`).val().replace(/,/g, ''):0);
+            payDetail.description = $(`#pay${index}_description`).val();
             payDetail.total_weight = Number($(`#pay${index}_total_weight`).val()?$(`#pay${index}_total_weight`).val().replace(/,/g, ''):0);
             payDetail.gem_weight = Number($(`#pay${index}_gem_weight`).val()?$(`#pay${index}_gem_weight`).val().replace(/,/g, ''):0);
             // payDetail.gold_weight = Number($(`#pay${index}_gold_weight`).val()?$(`#pay${index}_gold_weight`).val().replace(/,/g, ''):0);
@@ -1079,10 +1084,10 @@
                 valid = false;
                 $('#actual_weight').addClass('invalid');
             }
-            if(order_pays.length > 0 && !$('#pay_total_wage').val()){
-                valid = false;
-                $('#pay_total_wage').addClass('invalid');
-            }
+            // if(order_pays.length > 0 && !$('#pay_total_wage').val()){
+            //     valid = false;
+            //     $('#pay_total_wage').addClass('invalid');
+            // } validate ở dưới
             if(!$('#pay_date').val()){
                 valid = false;
                 $('#pay_date').addClass('invalid');
@@ -1233,6 +1238,7 @@
             return valid;
         }
         function submit() {
+            $('#save_button').hide();
             if(validate()){
                 $('.loading').show();
                 //$('#form input').attr('readonly', true);
@@ -1250,14 +1256,15 @@
                             wage: Number($('#wage').val() ? $('#wage').val() : 0), // tiền công trong bảng công nợ
                             exchange_g10: Number($('#exchange_g10').val() ? $('#exchange_g10').val().replace(/,/g, '') : 0), // Q10 trong bảng công nợ
                             saler_id: Number('{{CRUDBooster::myId()}}'),
-                            order_date: moment($('#order_date').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                            order_date: moment($('#order_date').val(), 'DD/MM/YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
                             order_no: null,
                             gold_age_1: Number($('#gold_age_1').val() ? $('#gold_age_1').val().replace(/,/g, '') : 0),
                             gold_age_2: Number($('#gold_age_2').val() ? $('#gold_age_2').val().replace(/,/g, '') : 0),
                             gold_age_3: Number($('#gold_age_3').val() ? $('#gold_age_3').val().replace(/,/g, '') : 0),
                             sampling_discount: Number($('#sampling_discount').val() ? $('#sampling_discount').val().replace(/,/g, '') : 0),
                             pay_date: moment($('#pay_date').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
-                            actual_weight: Number($('#actual_weight').val() ? $('#actual_weight').val().replace(/,/g, '') : 0),
+                            pay_total_wage: Number($('#pay_total_wage').val() ? $('#pay_total_wage').val().replace(/,/g, '') : 0),
+							actual_weight: Number($('#actual_weight').val() ? $('#actual_weight').val().replace(/,/g, '') : 0),
                             reduce: Number($('#reduce').val() ? $('#reduce').val().replace(/,/g, '') : 0),
                             total_exchange_g10: total_sale_exchange_g10, // tổng vàng quy 10
                             total_wage: total_sale_wage, // tổng tiền công
@@ -1276,6 +1283,7 @@
                         order_pays: order_pays,
                         _token: '{{ csrf_token() }}'
                     },
+                    dataType: "json",
                     async: true,
                     success: function (data) {
                         if (data) {
@@ -1297,9 +1305,12 @@
                     error: function (request, status, error) {
                         $('.loading').hide();
                         swal("Thông báo", "Có lỗi xãy ra khi lưu dữ liệu, vui lòng thử lại.", "error");
+                        $('#save_button').show();
                     }
                 });
-            }
+            } else {
+                $('#save_button').show();
+			}
         }
         function popupWindow(url,windowName) {
             window.open(url,windowName,'height=500,width=600');

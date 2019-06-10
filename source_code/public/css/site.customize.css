@@ -10,7 +10,7 @@
         }
     }
     .login-box, .register-box, .lockscreen-wrapper{
-        margin: 2% auto 2% 50% !important;
+        margin: 2% auto 2% 65% !important;
     }
 }
 @media (max-width: 768px){
@@ -35,6 +35,7 @@
     text-align: center;
     font-size: large;
     width: 100%;
+    color: black;
 }
 .user-panel>.image>img{
     width: 45px;
