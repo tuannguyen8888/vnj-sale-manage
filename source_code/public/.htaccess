@@ -18,5 +18,5 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 </IfModule>
-php_value memory_limit 4294967296
+php_value memory_limit -1
 php_value max_execution_time 600

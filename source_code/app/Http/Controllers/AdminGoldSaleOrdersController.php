@@ -216,7 +216,7 @@
 	        */
 	        $this->load_js = array();
             $this->load_js[] = asset("plugins/autoNumeric/autoNumeric.min.js");
-            $this->load_js[] = asset("plugins/jQuery-Scanner-Detection/jquery.scannerdetection.js");
+//            $this->load_js[] = asset("plugins/jQuery-Scanner-Detection/jquery.scannerdetection.js");
             $this->load_js[] = asset("vendor/crudbooster/assets/datetimepicker-master/build/jquery.datetimepicker.full.min.js");
             $this->load_js[] = asset("vendor/crudbooster/assets/select2/dist/js/select2.min.js");
 	        /*
@@ -394,7 +394,7 @@
                 if ($order_pays && count($order_pays)) {
                     foreach ($order_pays as $pay) {
                         $new_pay = arrayCopy($pay);
-//                unset($pay['id']);
+                        unset($new_pay['id']);
                         $new_pay['order_id'] = $order_id;
                         array_push($new_order_pays, $new_pay);
                     }

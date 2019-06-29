@@ -449,17 +449,17 @@
         total_sale_wage = 0;
         lastTimeScanBarCode = moment();
         $(function(){
-            $(document).scannerDetection({
-                timeBeforeScanTest: 200, // wait for the next character for upto 200ms
-                avgTimeByChar: 40, // it's not a barcode if a character takes longer than 100ms
-                preventDefault: false,
-                endChar: [13],
-                onComplete: function(barcode, qty) {
-                    $('#bar_code').val(barcode);
-                    findProduct(null);
-                },
-                onError: function( string, qty) {}
-            });
+            // $(document).scannerDetection({
+            //     timeBeforeScanTest: 200, // wait for the next character for upto 200ms
+            //     avgTimeByChar: 40, // it's not a barcode if a character takes longer than 100ms
+            //     preventDefault: false,
+            //     endChar: [13],
+            //     onComplete: function(barcode, qty) {
+            //         $('#bar_code').val(barcode);
+            //         findProduct(null);
+            //     },
+            //     onError: function( string, qty) {}
+            // });
             let todayStr = moment().format('DD/MM/YYYY');
             if($('#order_date').val() == ''){
                 $('#order_date').val(moment().format('DD/MM/YYYY HH:mm:ss'));

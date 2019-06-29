@@ -30,6 +30,7 @@
 	P.total_weight,
     P.gem_weight,
     P.gold_weight,
+    round(P.gold_weight * SOD.age / 100, 3) as exchange_g10,
     P.retail_machining_fee as wage,
     SOD.age,
     SOD.discount_wage 
@@ -88,6 +89,9 @@ ORDER BY SOD.age, P.product_code]]>
 			<property name="com.jaspersoft.studio.field.label" value="gold_weight"/>
 			<property name="com.jaspersoft.studio.field.tree.path" value="gold_products"/>
 		</field>
+		<field name="exchange_g10" class="java.lang.Double">
+			<property name="com.jaspersoft.studio.field.label" value="exchange_g10"/>
+		</field>
 		<field name="wage" class="java.lang.Double">
 			<property name="com.jaspersoft.studio.field.label" value="wage"/>
 			<property name="com.jaspersoft.studio.field.tree.path" value="gold_products"/>
@@ -117,7 +121,7 @@ ORDER BY SOD.age, P.product_code]]>
     sum(P.gem_weight) as gem_weight,
     sum(P.gold_weight) as gold_weight,
     SOD.age as sell_age,
-    sum(P.gold_weight) * SOD.age / 100 as exchange_g10,
+    round(sum(P.gold_weight) * SOD.age / 100, 3) as exchange_g10,
     sum(P.retail_machining_fee) as wage
 FROM gold_sale_order_details as SOD
 LEFT JOIN gold_products as P ON SOD.product_id = P.id
@@ -201,7 +205,7 @@ GROUP BY product_group_name, product_type_name, sell_age]]>
     IFNULL((SELECT sum(P.total_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_weight,
     IFNULL((SELECT sum(P.gem_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_gem_weight,
     IFNULL((SELECT sum(P.gold_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_gold_weight,
-    IFNULL((SELECT sum(P.gold_weight * SOD.age / 100) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_exchange_g10,
+    IFNULL((SELECT sum( round(P.gold_weight * SOD.age / 100, 3)) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_exchange_g10,
     IFNULL((SELECT sum(P.retail_machining_fee) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_wage,
     SO.sampling_discount,
     SO.reduce,
@@ -754,7 +758,7 @@ WHERE SO.id = $P{id}]]>
 									<font fontName="Arial"/>
 									<paragraph leftIndent="5" rightIndent="5"/>
 								</textElement>
-								<textFieldExpression><![CDATA[($F{gold_weight} * $F{age} / 100)!=0?($F{gold_weight} * $F{age} / 100):null]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{exchange_g10}!=0?$F{exchange_g10}:null]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

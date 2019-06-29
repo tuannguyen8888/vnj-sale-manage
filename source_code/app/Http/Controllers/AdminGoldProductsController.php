@@ -402,16 +402,21 @@
 //                });//->get();
 //                $rows = $rows->get();
                 $rows = [];
-                Excel::filter('chunk')->load($file)->chunk(1000, function($results) use (&$rows) {
+
+                Log::debug('chỉ load 2 dòng đầu để check column ');
+                Excel::filter('chunk')->load($file)->chunk(2, function($results) use (&$rows) // chỉ load 2 dòng đầu để check column
+                {
                     $rows = array_merge($rows,  $results->toArray());
+                    return true; // return true để không load tiếp
                 }, false);
 
                 Log::debug('count($rows) = ');
                 Log::debug(count($rows));
-                Session::put('total_data_import',count($rows));
+                Session::put('total_data_import',15000); // set đại, load file xong sẽ set lại
                 $data['table_rows'] = []; /// $data['table_rows'] = $rows; chuyển qua load bằng ajax
-                Session::put('table_rows',$rows);
-                unlink($file);
+                //Session::put('table_rows',$rows);
+                Session::put('path_import_product',$file);
+                //unlink($file);
                 $data_import_column = array();
                 foreach($rows as $value) {
                     $a = array();
@@ -468,32 +473,42 @@
             }
             return view('import_products',$data);
         }
-        public function postLoadDataImport(){
-            set_time_limit(0);
-            ini_set('memory_limit', '4294967296');
-            $para = Request::json()->all();
-            $data = Session::get('table_rows');
-            $start = intval($para['dataTableParameters']['start']);
-            $length = intval($para['dataTableParameters']['length']);
-            //Log::debug('$start = '.$start.'; $length = '.$length);
-            $dataTableData = array();
-            $dataTableData += ['draw' => $para['dataTableParameters']['draw']];
-            $dataTableData += ['recordsTotal' => count($data)];
-            $dataTableData += ['recordsFiltered' => $dataTableData['recordsTotal']];
-            $select_data = array();
-            $i = $start;
-            if($length == -1){
-                $select_data = $data;
-            }else{
-                while ($i < $start + $length && $i < $dataTableData['recordsTotal']) {
-                    //Log::debug('$data['.$i.'] = '.Json::encode($data[$i]));
-                    array_push($select_data, $data[$i]);
-                    $i += 1;
-                }
-            }
-            $dataTableData += ['data'=> $select_data];
-            return response()->json($dataTableData);
-        }
+//        public function postLoadDataImport(){
+//            set_time_limit(0);
+//            ini_set('memory_limit', '4294967296');
+//            $para = Request::json()->all();
+////            $data = Session::get('table_rows');
+//            $file = Session::get('path_import_product');
+//            $total_data_import = Session::get('total_data_import');
+//            $start = intval($para['dataTableParameters']['start']);
+//            $length = intval($para['dataTableParameters']['length']);
+//            Log::debug('$start = '.$start.'; $length = '.$length);
+//            $dataTableData = array();
+//            $dataTableData += ['draw' => $para['dataTableParameters']['draw']];
+//            $dataTableData += ['recordsTotal' => $total_data_import];
+//            $dataTableData += ['recordsFiltered' => $dataTableData['recordsTotal']];
+//            $select_data = array();
+//            $i = $start;
+//            if($length == -1){
+////                $select_data = $data;
+//                Excel::filter('chunk')->load($file)->chunk(1000, function($results) use (&$select_data) {
+//                    $select_data = array_merge($select_data,  $results->toArray());
+//                }, false);
+//            }else{
+////                while ($i < $start + $length && $i < $dataTableData['recordsTotal']) {
+////                    //Log::debug('$data['.$i.'] = '.Json::encode($data[$i]));
+////                    array_push($select_data, $data[$i]);
+////                    $i += 1;
+////                }
+//                $select_data = Excel::load($file, function($results) use (&$select_data) {
+//                    $results->take($start - 1)->limit($length);
+//                })->get();
+//
+//                Log::debug('$select_data = '.Json::encode($select_data));
+//            }
+//            $dataTableData += ['data'=> $select_data];
+//            return response()->json($dataTableData);
+//        }
         public function postDoneImport() {
             set_time_limit(0);
             ini_set('memory_limit', '4294967296');
@@ -544,12 +559,17 @@
 //            $table_columns  =  DB::getSchemaBuilder()->getColumnListing($this->table);
 
 //            $file = base64_decode(Request::get('file'));
-//            $file = storage_path('app/'.$file);
 
+            $file = Session::get('path_import_product');
+            $rows = [];
+            Excel::filter('chunk')->load($file)->chunk(1000, function($results) use (&$rows){
+                $rows = array_merge($rows,  $results->toArray());
+            }, false);
+            Session::put('total_data_import',count($rows));
 //            $rows = Excel::load($file,function($reader) {
 //            })->get();
-            $rows = Session::get('table_rows');
-
+//            $rows = Session::get('table_rows');
+            unlink($file);
             $has_created_at = false;
             if(CRUDBooster::isColumnExists($this->table,'created_at')) {
                 $has_created_at = true;
@@ -707,6 +727,9 @@
                     Cache::put('error_'.$file_md5,$e,500);
                 }
             }
+
+            Log::debug('đã import '.count($rows). ' dòng xong');
+            $rows = null;
             Session::put('table_rows',null);//đặt lại cho đỡ nặng memory
             return response()->json(['status'=>true]);
         }

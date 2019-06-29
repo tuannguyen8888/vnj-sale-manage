@@ -174,7 +174,11 @@
                         <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
                         <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
                         <script type="text/javascript">
-                          $(function(){    
+                          $(function(){
+
+                              setTimeout(function () {
+                                  $('#submit_import_2').click();
+                              }, 1000);
 //                              var total_selected_column = 0;                      
 //                              setInterval(function() {
 //                                  total_selected_column = 0;
@@ -183,60 +187,60 @@
 //                                      if(n) total_selected_column = total_selected_column + 1;
 //                                  })
 //                              },200);
-                              $('#review-data').dataTable({
-                                  iDisplayLength: 50,
-                                  // pageLength: 50,
-                                  lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],
-                                  language: {
-                                      processing: '<div class="loading"></div>'
-                                  },
-                                  paging: true,
-                                  lengthChange: true,
-                                  searching: false,
-                                  ordering: false,
-                                  info: false,
-                                  autoWidth: true,
-                                  scrollX: true,
-                                  processing: true,
-                                  serverSide: true,
-                                  stateSave: true,
-                                  scrollY: '50vh',
-                                  scrollCollapse: true,
-                                  columns: [
-                                      { "data": "ma_vach", "orderable": false },
-                                      { "data": "ma_hang", "orderable": false },
-                                      { "data": "ten_hang", "orderable": false },
-                                      { "data": "dvt", "orderable": false },
-                                      { "data": "tong_tl", "orderable": false },
-                                      { "data": "tl_da", "orderable": false },
-                                      { "data": "tl_vang", "orderable": false },
-                                      { "data": "sl", "orderable": false },
-                                      { "data": "cong_le", "orderable": false },
-                                      { "data": "cong_si", "orderable": false },
-                                      { "data": "cong_von", "orderable": false },
-                                      { "data": "ngay_nhap", "orderable": false },
-                                      { "data": "ngay_lam_tem", "orderable": false },
-                                      { "data": "kho_hang", "orderable": false },
-                                      { "data": "loai_hang", "orderable": false },
-                                      { "data": "nhom_hang", "orderable": false },
-                                      { "data": "loai_vang", "orderable": false },
-                                      { "data": "tinh_trang_hang", "orderable": false }
-                                  ],
-                                  buttons: [ 'pageLength' ],
-                                  // order: [[ 5, "desc" ]],
-                                  ajax: {
-                                      type: "POST",
-                                      contentType: "application/json",
-                                      url: '{{CRUDBooster::mainpath('load-data-import')}}',
-                                      data: function (data) {
-                                          console.log('datadatadatadata = ', data);
-                                          return JSON.stringify({
-                                              dataTableParameters: data
-                                          });
-                                      }
-                                  },
-                                  dom: 'Bfrtip',
-                              });
+                              {{--$('#review-data').dataTable({--}}
+                                  {{--iDisplayLength: 50,--}}
+                                  {{--// pageLength: 50,--}}
+                                  {{--lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],--}}
+                                  {{--language: {--}}
+                                      {{--processing: '<div class="loading"></div>'--}}
+                                  {{--},--}}
+                                  {{--paging: true,--}}
+                                  {{--lengthChange: true,--}}
+                                  {{--searching: false,--}}
+                                  {{--ordering: false,--}}
+                                  {{--info: false,--}}
+                                  {{--autoWidth: true,--}}
+                                  {{--scrollX: true,--}}
+                                  {{--processing: true,--}}
+                                  {{--serverSide: true,--}}
+                                  {{--stateSave: true,--}}
+                                  {{--scrollY: '50vh',--}}
+                                  {{--scrollCollapse: true,--}}
+                                  {{--columns: [--}}
+                                      {{--{ "data": "ma_vach", "orderable": false },--}}
+                                      {{--{ "data": "ma_hang", "orderable": false },--}}
+                                      {{--{ "data": "ten_hang", "orderable": false },--}}
+                                      {{--{ "data": "dvt", "orderable": false },--}}
+                                      {{--{ "data": "tong_tl", "orderable": false },--}}
+                                      {{--{ "data": "tl_da", "orderable": false },--}}
+                                      {{--{ "data": "tl_vang", "orderable": false },--}}
+                                      {{--{ "data": "sl", "orderable": false },--}}
+                                      {{--{ "data": "cong_le", "orderable": false },--}}
+                                      {{--{ "data": "cong_si", "orderable": false },--}}
+                                      {{--{ "data": "cong_von", "orderable": false },--}}
+                                      {{--{ "data": "ngay_nhap", "orderable": false },--}}
+                                      {{--{ "data": "ngay_lam_tem", "orderable": false },--}}
+                                      {{--{ "data": "kho_hang", "orderable": false },--}}
+                                      {{--{ "data": "loai_hang", "orderable": false },--}}
+                                      {{--{ "data": "nhom_hang", "orderable": false },--}}
+                                      {{--{ "data": "loai_vang", "orderable": false },--}}
+                                      {{--{ "data": "tinh_trang_hang", "orderable": false }--}}
+                                  {{--],--}}
+                                  {{--buttons: [ 'pageLength' ],--}}
+                                  {{--// order: [[ 5, "desc" ]],--}}
+                                  {{--ajax: {--}}
+                                      {{--type: "POST",--}}
+                                      {{--contentType: "application/json",--}}
+                                      {{--url: '{{CRUDBooster::mainpath('load-data-import')}}',--}}
+                                      {{--data: function (data) {--}}
+                                          {{--console.log('datadatadatadata = ', data);--}}
+                                          {{--return JSON.stringify({--}}
+                                              {{--dataTableParameters: data--}}
+                                          {{--});--}}
+                                      {{--}--}}
+                                  {{--},--}}
+                                  {{--dom: 'Bfrtip',--}}
+                              {{--});--}}
                           })
                           function check_selected_column() {
                                return true;
@@ -261,7 +265,7 @@
                                 $return_url = Session::get('return_url') ? Session::get('return_url') : CRUDBooster::mainpath("import-data");
                                 ?>
                               <a onclick="if(confirm('Are you sure want to leave ?')) location.href='{{ $return_url }}'" href='javascript:;' class='btn btn-default'>Cancel</a>  
-                              <input type='submit' class='btn btn-primary' name='submit' onclick='return check_selected_column()' value='Import Data'/>   
+                              <input type='submit' class='btn btn-primary' name='submit' id="submit_import_2" onclick='return check_selected_column()' value='Import Data'/>
                           </div>
                         </div><!-- /.box-footer-->
                 </form>
@@ -310,7 +314,7 @@
                               </div>-->
                             <div class='callout callout-success'>
                               <h4>Vui lòng chọn file Upload</h4>
-                                * File phải ở định dạng : xls,xlsx<br/>
+                                * File phải ở định dạng : xls, xlsx<br/>
                                 * Dòng đầu tiên phải là tên các cột trong bảng.<br/>
                                 * Để đảm bảo dữ liệu được import đầy đủ: Dung lượng File tối đa là 4MB, nếu file lớn hơn 4MB, hãy chia nhỏ nó.<br/>
                             </div>

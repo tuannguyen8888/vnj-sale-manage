@@ -509,18 +509,18 @@
         invalid_order = false;// đánh dấu đơn hàng vi phạm
         lastTimeScanBarCode = moment();
         $(function(){
-            $(document).scannerDetection({
-                timeBeforeScanTest: 200, // wait for the next character for upto 200ms
-                avgTimeByChar: 40, // it's not a barcode if a character takes longer than 100ms
-                preventDefault: false,
-                endChar: [13],
-                onComplete: function(barcode, qty) {
-                    $('#bar_code').val(barcode);
-                    findProduct(null);
-                },
-                onError: function( string, qty) {}
-            });
-            sessionTimeout = Number('{{Config::get('session.lifetime') * 60)}}');
+            // $(document).scannerDetection({
+            //     timeBeforeScanTest: 200, // wait for the next character for upto 200ms
+            //     avgTimeByChar: 40, // it's not a barcode if a character takes longer than 100ms
+            //     preventDefault: false,
+            //     endChar: [13],
+            //     onComplete: function(barcode, qty) {
+            //         $('#bar_code').val(barcode);
+            //         findProduct(null);
+            //     },
+            //     onError: function( string, qty) {}
+            // });
+            sessionTimeout = Number('{{Config::get('session.lifetime') * 60}}');
 			setTimeout(function () {
                 swal(
                     	{
@@ -684,12 +684,13 @@
 			}
             hideModalcustomer_id();
         }
-		productFinding = false;
+		// productFinding = false;
         function findProduct(event) {
             if(event == null || event.keyCode == 13) {
-                if(!productFinding && moment().diff(lastTimeScanBarCode, 's') >= 1) {
+                if(moment().diff(lastTimeScanBarCode, 's') >= 1) // productFinding &&
+                {
                     lastTimeScanBarCode = moment();
-                    productFinding = true;
+                    // productFinding = true;
                     let bar_code = $('#bar_code').val();
                     let added = false;
                     order_details.forEach(function (detail, index) {
@@ -700,7 +701,10 @@
                         }
                     });
                     if (bar_code && !added) {
-                        $('.loading').show();
+                        // $('.loading').show();
+						setTimeout(function () {
+                            $('#bar_code').val(null);
+                        },200);
                         $.ajax({
                             method: "GET",
                             url: '{{Route("AdminGoldProductsControllerGetSearchProduct")}}',
@@ -718,11 +722,11 @@
                                     } else {
                                         let tmp_added = false;
                                         order_details.forEach(function (detail, index) {
-                                            if (detail.bar_code == data.product.product_code) {
+                                            if (detail.bar_code == data.product.bar_code) {
                                                 tmp_added = true;
                                             }
                                         });
-                                        if(tmp_added) {
+                                        if(!tmp_added) {
                                             data.product.no = order_details ? order_details.length + 1 : 1;
                                             switch (data.product.product_code.toUpperCase().trim().substr(0, 2)) {
                                                 case 'V_': //hàng khác
@@ -753,18 +757,18 @@
                                     $('#bar_code').val(null);
                                     swal("Thông báo", "Không tìm thấy mã " + bar_code, "warning");
                                 }
-                                productFinding = false;
-                                $('.loading').hide();
+                                // productFinding = false;
+                                // $('.loading').hide();
                             },
                             error: function (request, status, error) {
-                                $('.loading').hide();
+                                // $('.loading').hide();
 								console.log('Lỗi khi tìm sản phẩm ', [request, status, error]);
                                 swal("Thông báo", "Có lỗi xãy ra khi tải dữ liệu, vui lòng thử lại.", "warning");
-                                productFinding = false;
+                                // productFinding = false;
                             }
                         });
                     } else {
-                        productFinding = false;
+                        // productFinding = false;
 					}
                 }
             }
@@ -909,12 +913,12 @@
             return_total.exchange_g10 = 0;
             return_total.wage = 0;
             order_returns.forEach(function (detail, index) {
-                return_total.qty += detail.qty;
-                return_total.total_weight += detail.total_weight;
-                return_total.gem_weight += detail.gem_weight;
-                return_total.gold_weight += detail.gold_weight;
-                return_total.exchange_g10 += detail.exchange_g10;
-                return_total.wage += detail.wage;
+                return_total.qty += isNaN(detail.qty) ? 0 : detail.qty;
+                return_total.total_weight += isNaN(detail.total_weight) ? 0 : detail.total_weight;
+                return_total.gem_weight += isNaN(detail.gem_weight) ? 0 : detail.gem_weight;
+                return_total.gold_weight += isNaN(detail.gold_weight) ? 0 : detail.gold_weight;
+                return_total.exchange_g10 += isNaN(detail.exchange_g10) ? 0 : detail.exchange_g10;
+                return_total.wage += isNaN(detail.wage) ? 0 : detail.wage;
             });
             $('#return0_qty').html(return_total.qty.toLocaleString('en-US'));
             $('#return0_total_weight').html(return_total.total_weight.toLocaleString('en-US'));
@@ -931,7 +935,7 @@
                 // swal("Thông báo", "Bạn không thể thêm sản phẩm sau khi đã lưu đơn hàng, hãy tạo đơn hàng mới.", "warning");
                 return;
             }
-            let tmp_id = - order_pays.length;
+            let tmp_id = - (order_pays.length + 1);
             order_pays.push({id: tmp_id});
             let html = `<tr id="order_pay_index_${tmp_id}">
 							<th class="text-center"><a onclick="removePayDetail(${tmp_id})" class="text-red" style="cursor: pointer;"><i class="fa fa-remove"></i></a></th>
@@ -977,7 +981,7 @@
             let removeIndex = -1;
             order_pays.forEach(function (pay, index) {
                 if(pay.id == removeId) {
-                    removePay = detail;
+                    removePay = pay;
                     removeIndex = index;
                 }
             });
@@ -987,133 +991,138 @@
             calcTotalOfPays();
             calcTotalSaleOrder();
         }
-        function pay_method_change(index) {
-			let pay_method = $(`#pay${index}_pay_method`).val();
+        function pay_method_change(changeId) {
+			let pay_method = $(`#pay${changeId}_pay_method`).val();
 			switch (pay_method) {
                 case '1':
-                    $(`#pay${index}_qty`).hide();
-                    $(`#pay${index}_qty`).val(null);
-                    $(`#pay${index}_total_weight`).hide();
-                    $(`#pay${index}_total_weight`).val(null);
-                    $(`#pay${index}_gem_weight`).hide();
-                    $(`#pay${index}_gem_weight`).val(null);
-                    $(`#pay${index}_gold_weight`).show();
-                    $(`#pay${index}_gold_weight`).attr('readonly', false);
-                    $(`#pay${index}_gold_weight`).attr('disabled', false);
-                    $(`#pay${index}_money`).hide();
-                    $(`#pay${index}_money`).val(null);
-                    $(`#pay${index}_gold_age`).show();
-                    $(`#pay${index}_converted_price`).hide();
-                    $(`#pay${index}_converted_price`).val(null);
+                    $(`#pay${changeId}_qty`).hide();
+                    $(`#pay${changeId}_qty`).val(null);
+                    $(`#pay${changeId}_total_weight`).hide();
+                    $(`#pay${changeId}_total_weight`).val(null);
+                    $(`#pay${changeId}_gem_weight`).hide();
+                    $(`#pay${changeId}_gem_weight`).val(null);
+                    $(`#pay${changeId}_gold_weight`).show();
+                    $(`#pay${changeId}_gold_weight`).attr('readonly', false);
+                    $(`#pay${changeId}_gold_weight`).attr('disabled', false);
+                    $(`#pay${changeId}_money`).hide();
+                    $(`#pay${changeId}_money`).val(null);
+                    $(`#pay${changeId}_gold_age`).show();
+                    $(`#pay${changeId}_converted_price`).hide();
+                    $(`#pay${changeId}_converted_price`).val(null);
                     break;
                 case '2':
-                    $(`#pay${index}_qty`).hide();
-                    $(`#pay${index}_qty`).val(null);
-                    $(`#pay${index}_total_weight`).hide();
-                    $(`#pay${index}_total_weight`).val(null);
-                    $(`#pay${index}_gem_weight`).hide();
-                    $(`#pay${index}_gem_weight`).val(null);
-                    $(`#pay${index}_gold_weight`).show();
-                    $(`#pay${index}_gold_weight`).attr('readonly', false);
-                    $(`#pay${index}_gold_weight`).attr('disabled', false);
-                    $(`#pay${index}_money`).hide();
-                    $(`#pay${index}_money`).val(null);
-                    $(`#pay${index}_gold_age`).show();
-                    $(`#pay${index}_converted_price`).hide();
-                    $(`#pay${index}_converted_price`).val(null);
+                    $(`#pay${changeId}_qty`).hide();
+                    $(`#pay${changeId}_qty`).val(null);
+                    $(`#pay${changeId}_total_weight`).hide();
+                    $(`#pay${changeId}_total_weight`).val(null);
+                    $(`#pay${changeId}_gem_weight`).hide();
+                    $(`#pay${changeId}_gem_weight`).val(null);
+                    $(`#pay${changeId}_gold_weight`).show();
+                    $(`#pay${changeId}_gold_weight`).attr('readonly', false);
+                    $(`#pay${changeId}_gold_weight`).attr('disabled', false);
+                    $(`#pay${changeId}_money`).hide();
+                    $(`#pay${changeId}_money`).val(null);
+                    $(`#pay${changeId}_gold_age`).show();
+                    $(`#pay${changeId}_converted_price`).hide();
+                    $(`#pay${changeId}_converted_price`).val(null);
                     break;
                 case '3':
-                    $(`#pay${index}_qty`).hide();
-                    $(`#pay${index}_qty`).val(null);
-                    $(`#pay${index}_total_weight`).hide();
-                    $(`#pay${index}_total_weight`).val(null);
-                    $(`#pay${index}_gem_weight`).hide();
-                    $(`#pay${index}_gem_weight`).val(null);
-                    $(`#pay${index}_gold_weight`).hide();
-                    $(`#pay${index}_gold_weight`).val(null);
-                    $(`#pay${index}_gold_weight`).attr('readonly', false);
-                    $(`#pay${index}_gold_weight`).attr('disabled', false);
-                    $(`#pay${index}_money`).show();
-                    $(`#pay${index}_gold_age`).hide();
-                    $(`#pay${index}_gold_age`).val(null);
-                    $(`#pay${index}_converted_price`).show();
+                    $(`#pay${changeId}_qty`).hide();
+                    $(`#pay${changeId}_qty`).val(null);
+                    $(`#pay${changeId}_total_weight`).hide();
+                    $(`#pay${changeId}_total_weight`).val(null);
+                    $(`#pay${changeId}_gem_weight`).hide();
+                    $(`#pay${changeId}_gem_weight`).val(null);
+                    $(`#pay${changeId}_gold_weight`).hide();
+                    $(`#pay${changeId}_gold_weight`).val(null);
+                    $(`#pay${changeId}_gold_weight`).attr('readonly', false);
+                    $(`#pay${changeId}_gold_weight`).attr('disabled', false);
+                    $(`#pay${changeId}_money`).show();
+                    $(`#pay${changeId}_gold_age`).hide();
+                    $(`#pay${changeId}_gold_age`).val(null);
+                    $(`#pay${changeId}_converted_price`).show();
                     break;
                 case '4':
-                    $(`#pay${index}_qty`).show();
-                    $(`#pay${index}_total_weight`).show();
-                    $(`#pay${index}_gem_weight`).show();
-                    $(`#pay${index}_gold_weight`).show();
-                    $(`#pay${index}_gold_weight`).attr('readonly', true);
-                    $(`#pay${index}_gold_weight`).attr('disabled', true);
-                    $(`#pay${index}_money`).hide();
-                    $(`#pay${index}_money`).val(null);
-                    $(`#pay${index}_gold_age`).show();
-                    $(`#pay${index}_converted_price`).hide();
-                    $(`#pay${index}_converted_price`).val(null);
+                    $(`#pay${changeId}_qty`).show();
+                    $(`#pay${changeId}_total_weight`).show();
+                    $(`#pay${changeId}_gem_weight`).show();
+                    $(`#pay${changeId}_gold_weight`).show();
+                    $(`#pay${changeId}_gold_weight`).attr('readonly', true);
+                    $(`#pay${changeId}_gold_weight`).attr('disabled', true);
+                    $(`#pay${changeId}_money`).hide();
+                    $(`#pay${changeId}_money`).val(null);
+                    $(`#pay${changeId}_gold_age`).show();
+                    $(`#pay${changeId}_converted_price`).hide();
+                    $(`#pay${changeId}_converted_price`).val(null);
                     break;
                 case '5':
-                    $(`#pay${index}_qty`).show();
-                    $(`#pay${index}_total_weight`).show();
-                    $(`#pay${index}_gem_weight`).show();
-                    $(`#pay${index}_gold_weight`).show();
-                    $(`#pay${index}_gold_weight`).attr('readonly', true);
-                    $(`#pay${index}_gold_weight`).attr('disabled', true);
-                    $(`#pay${index}_money`).hide();
-                    $(`#pay${index}_money`).val(null);
-                    $(`#pay${index}_gold_age`).show();
-                    $(`#pay${index}_converted_price`).hide();
-                    $(`#pay${index}_converted_price`).val(null);
+                    $(`#pay${changeId}_qty`).show();
+                    $(`#pay${changeId}_total_weight`).show();
+                    $(`#pay${changeId}_gem_weight`).show();
+                    $(`#pay${changeId}_gold_weight`).show();
+                    $(`#pay${changeId}_gold_weight`).attr('readonly', true);
+                    $(`#pay${changeId}_gold_weight`).attr('disabled', true);
+                    $(`#pay${changeId}_money`).hide();
+                    $(`#pay${changeId}_money`).val(null);
+                    $(`#pay${changeId}_gold_age`).show();
+                    $(`#pay${changeId}_converted_price`).hide();
+                    $(`#pay${changeId}_converted_price`).val(null);
                     break;
             }
-            pays_change(index);
+            pays_change(changeId);
         }
-        function pays_change(index) {
-			let payDetail = order_pays[index];
-            payDetail.qty = Number($(`#pay${index}_qty`).val()?$(`#pay${index}_qty`).val().replace(/,/g, ''):0);
-            payDetail.description = $(`#pay${index}_description`).val();
-            payDetail.total_weight = Number($(`#pay${index}_total_weight`).val()?$(`#pay${index}_total_weight`).val().replace(/,/g, ''):0);
-            payDetail.gem_weight = Number($(`#pay${index}_gem_weight`).val()?$(`#pay${index}_gem_weight`).val().replace(/,/g, ''):0);
-            // payDetail.gold_weight = Number($(`#pay${index}_gold_weight`).val()?$(`#pay${index}_gold_weight`).val().replace(/,/g, ''):0);
-            payDetail.money = Number($(`#pay${index}_money`).val()?$(`#pay${index}_money`).val().replace(/,/g, ''):0);
-            payDetail.gold_age = Number($(`#pay${index}_gold_age`).val()?$(`#pay${index}_gold_age`).val().replace(/,/g, ''):0);
-            payDetail.converted_price = Number($(`#pay${index}_converted_price`).val()?$(`#pay${index}_converted_price`).val().replace(/,/g, ''):0);
-            let pay_method = $(`#pay${index}_pay_method`).val();
+        function pays_change(changeId) {
+			let payDetail = null;
+            order_pays.forEach(function (pay, i) {
+                if(pay.id == changeId) {
+                    payDetail = pay;
+                }
+            });
+            payDetail.qty = Number($(`#pay${changeId}_qty`).val()?$(`#pay${changeId}_qty`).val().replace(/,/g, ''):0);
+            payDetail.description = $(`#pay${changeId}_description`).val();
+            payDetail.total_weight = Number($(`#pay${changeId}_total_weight`).val()?$(`#pay${changeId}_total_weight`).val().replace(/,/g, ''):0);
+            payDetail.gem_weight = Number($(`#pay${changeId}_gem_weight`).val()?$(`#pay${changeId}_gem_weight`).val().replace(/,/g, ''):0);
+            // payDetail.gold_weight = Number($(`#pay${changeId}_gold_weight`).val()?$(`#pay${changeId}_gold_weight`).val().replace(/,/g, ''):0);
+            payDetail.money = Number($(`#pay${changeId}_money`).val()?$(`#pay${changeId}_money`).val().replace(/,/g, ''):0);
+            payDetail.gold_age = Number($(`#pay${changeId}_gold_age`).val()?$(`#pay${changeId}_gold_age`).val().replace(/,/g, ''):0);
+            payDetail.converted_price = Number($(`#pay${changeId}_converted_price`).val()?$(`#pay${changeId}_converted_price`).val().replace(/,/g, ''):0);
+            let pay_method = $(`#pay${changeId}_pay_method`).val();
             payDetail.pay_method = pay_method != '' ? Number(pay_method) : 0;
             payDetail.exchange_g10 = 0;
             payDetail.gold_weight = 0;
             switch (pay_method) {
                 case '1':
-                    payDetail.gold_weight = Number($(`#pay${index}_gold_weight`).val()?$(`#pay${index}_gold_weight`).val().replace(/,/g, ''):0);
+                    payDetail.gold_weight = Number($(`#pay${changeId}_gold_weight`).val()?$(`#pay${changeId}_gold_weight`).val().replace(/,/g, ''):0);
                     payDetail.exchange_g10 = payDetail.gold_weight * payDetail.gold_age / 100;
                     payDetail.exchange_g10 = Math.round(payDetail.exchange_g10 * 1000000) / 1000000;
-                    $(`#pay${index}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
+                    $(`#pay${changeId}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
                     break;
                 case '2':
-                    payDetail.gold_weight = Number($(`#pay${index}_gold_weight`).val()?$(`#pay${index}_gold_weight`).val().replace(/,/g, ''):0);
+                    payDetail.gold_weight = Number($(`#pay${changeId}_gold_weight`).val()?$(`#pay${changeId}_gold_weight`).val().replace(/,/g, ''):0);
                     payDetail.exchange_g10 = payDetail.gold_weight * payDetail.gold_age / 100;
                     payDetail.exchange_g10 = Math.round(payDetail.exchange_g10 * 1000000) / 1000000;
-                    $(`#pay${index}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
+                    $(`#pay${changeId}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
                     break;
                 case '3':
                     payDetail.exchange_g10 = payDetail.converted_price == 0 ? 0 : (payDetail.money / payDetail.converted_price);
                     payDetail.exchange_g10 = Math.round(payDetail.exchange_g10 * 1000000) / 1000000;
-                    $(`#pay${index}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
+                    $(`#pay${changeId}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
                     break;
                 case '4':
                     payDetail.gold_weight = payDetail.total_weight - payDetail.gem_weight;
                     payDetail.gold_weight = Math.round(payDetail.gold_weight * 1000000) / 1000000;
-                    $(`#pay${index}_gold_weight`).val(payDetail.gold_weight);
+                    $(`#pay${changeId}_gold_weight`).val(payDetail.gold_weight);
                     payDetail.exchange_g10 = payDetail.gold_weight * payDetail.gold_age / 100;
                     payDetail.exchange_g10 = Math.round(payDetail.exchange_g10 * 1000000) / 1000000;
-                    $(`#pay${index}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
+                    $(`#pay${changeId}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
                     break;
                 case '5':
                     payDetail.gold_weight = payDetail.total_weight - payDetail.gem_weight;
                     payDetail.gold_weight = Math.round(payDetail.gold_weight * 1000000) / 1000000;
-                    $(`#pay${index}_gold_weight`).val(payDetail.gold_weight);
+                    $(`#pay${changeId}_gold_weight`).val(payDetail.gold_weight);
                     payDetail.exchange_g10 = payDetail.gold_weight * payDetail.gold_age / 100;
                     payDetail.exchange_g10 = Math.round(payDetail.exchange_g10 * 1000000) / 1000000;
-                    $(`#pay${index}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
+                    $(`#pay${changeId}_exchange_g10`).html(payDetail.exchange_g10.toLocaleString('en-US'));
                     break;
             }
             calcTotalOfPays();
@@ -1122,7 +1131,7 @@
         function calcTotalOfPays() {
             pay_total_exchange_g10 = 0;
             order_pays.forEach(function (detail, index) {
-                pay_total_exchange_g10 += detail.exchange_g10;
+                pay_total_exchange_g10 += isNaN(detail.exchange_g10)? 0 : detail.exchange_g10;
             });
             pay_total_exchange_g10 = Math.round(pay_total_exchange_g10 * 1000000) / 1000000;
             $('#pay_total_exchange_g10').html(pay_total_exchange_g10.toLocaleString('en-US'));
@@ -1144,7 +1153,7 @@
             let pay_total = pay_total_wage;
             order_pays.forEach(function (detail, index) {
                 if(detail.pay_method == 3) {
-                    pay_total += detail.money;
+                    pay_total += isNaN(detail.money)? 0 : detail.money;
 				}
             });
             $('#pay_total').html(pay_total.toLocaleString('en-US'));
@@ -1328,10 +1337,10 @@
                 margin = 0.02;
             } else if(order_details.length <= 100)
             {
-                margin = 0.03;
+                margin = 0.04;
             } else // if(order_details.length > 100)
             {
-                margin = 0.04;
+                margin = 0.05;
             }
             $(`#actual_weight`).removeClass('invalid');
             if (actual_weight < (total_weight_calc - margin)) {
