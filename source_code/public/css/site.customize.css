@@ -63,3 +63,7 @@
 .invisible{
     visibility: hidden;;
 }
+.btn-purple {
+    background-color: #605ca8 !important;
+    color: white !important;
+}

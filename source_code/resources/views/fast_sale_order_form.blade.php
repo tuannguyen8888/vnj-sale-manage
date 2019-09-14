@@ -374,7 +374,8 @@
 
 	<script type="application/javascript">
         // table_order_details = null;
-        stamp_weight = Number('{{CRUDBooster::getSetting('trong_luong_tem')}}')
+        stamp_weight = Number('{{CRUDBooster::getSetting('trong_luong_tem')}}');
+        owner_stock_ids = '{{$stock_ids}}'.split(',');
         order_id: null; // sẽ có khi lưu thành công
         readOnlyAll = false;
         order_details = [];
@@ -642,6 +643,8 @@
                                     if (data.product.qty == 0) {
                                         $('#bar_code').val(null);
                                         swal("Thông báo", "Sản phẩm [" + bar_code + "] đã bán.", "warning");
+                                    } else if (owner_stock_ids.indexOf(data.product.stock_id + '') < 0) {
+                                        swal("Thông báo", "Sản phẩm [" + bar_code + "] nằm trong " + data.product.stock_name + ", không thuộc quyền quản lý của bạn, hãy kiểm tra lại.", "error");
                                     } else {
                                         data.product.no = order_details.length + 1;
                                         switch (data.product.product_code.substr(0,2).toUpperCase()) {
@@ -725,7 +728,9 @@
                 total_order.gem_weight += detail.gem_weight ? detail.gem_weight : 0;
                 total_order.gold_weight += detail.gold_weight ? detail.gold_weight : 0;
                 total_order.exchange_g10 += detail.exchange_g10 ? detail.exchange_g10 : 0;
-                total_order.wage += detail.retail_machining_fee ? detail.retail_machining_fee : 0;
+                // Ở phần xuất đơn hàng nhanh. Ở phần tổng cộng a cho trừ chiết khấu luôn
+				let wage = (detail.retail_machining_fee ? detail.retail_machining_fee : 0);
+                total_order.wage += wage - wage * (detail.discount_machining_fee?detail.discount_machining_fee:0) / 100;
             });
             $('#total_order_total_weight').html(total_order.total_weight.toLocaleString('en-US'));
             $('#total_order_gem_weight').html(total_order.gem_weight.toLocaleString('en-US'));

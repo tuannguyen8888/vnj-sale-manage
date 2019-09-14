@@ -47,7 +47,7 @@
 
             // Nguen add new for search
             $this->search_form = [];
-            $this->search_form[] = ["label"=>"Loại đơn hàng", "name"=>"order_type","type"=>"select","width"=>"col-md-3", 'dataenum'=>"3|<lable class='label label-danger'>ĐH vi phạm</lable>;2|<lable class='label label-info'>ĐH chuẩn</lable>;1|<lable class='label label-success'>ĐH nhanh</lable>"];
+            $this->search_form[] = ["label"=>"Loại đơn hàng", "name"=>"order_type","type"=>"select","width"=>"col-md-3", 'dataenum'=>"4|<lable class='label label-warning'>ĐH đang nhập</lable>;3|<lable class='label label-danger'>ĐH vi phạm</lable>;2|<lable class='label label-info'>ĐH chuẩn</lable>;1|<lable class='label label-success'>ĐH nhanh</lable>"];
             if(CRUDBooster::myPrivilegeId() == 2) {
                 $this->search_form[] = ["label" => "Khách hàng", "name" => "customer_id", "type" => "select2", "width" => "col-md-3", 'datatable' => 'gold_customers,name', 'datatable_where' => 'deleted_at is null and saler_id = ' . CRUDBooster::myId(), 'datatable_format' => "IFNULL(code,tmp_code),' - ',name,' - ',IFNULL(phone,'')"];
             }else{
@@ -101,9 +101,10 @@
 	        | 
 	        */
 	        $this->addaction = array();
-            $this->addaction[] = ['label'=>'Hóa đơn BH','url'=>CRUDBooster::mainpath('print-invoice?id=[id]'),'icon'=>'fa fa-newspaper-o','color'=>'info'];
-            $this->addaction[] = ['label'=>'Bảng kê chi tiết','url'=>CRUDBooster::mainpath('print-report-detail?id=[id]'),'icon'=>'glyphicon glyphicon-list-alt','color'=>'success'];
-            $this->addaction[] = ['label'=>'Danh sách hàng xuất kho','url'=>CRUDBooster::mainpath('print-report-detail-xlsx?id=[id]'),'icon'=>'fa fa-file-text-o','color'=>'primary'];
+            $this->addaction[] = ['label'=>'Nhập tiếp','url'=>CRUDBooster::mainpath('add?resume_id=[id]'),'icon'=>'fa fa-edit','color'=>'purple', 'showIf'=>"[order_type] == 4"]; // ĐH đang nhập
+            $this->addaction[] = ['label'=>'Hóa đơn BH','url'=>CRUDBooster::mainpath('print-invoice?id=[id]'),'icon'=>'fa fa-newspaper-o','color'=>'info', 'showIf'=>"[order_type] != 4"];
+            $this->addaction[] = ['label'=>'Bảng kê chi tiết','url'=>CRUDBooster::mainpath('print-report-detail?id=[id]'),'icon'=>'glyphicon glyphicon-list-alt','color'=>'success', 'showIf'=>"[order_type] != 4"];
+            $this->addaction[] = ['label'=>'Danh sách hàng xuất kho','url'=>CRUDBooster::mainpath('print-report-detail-xlsx?id=[id]'),'icon'=>'fa fa-file-text-o','color'=>'primary', 'showIf'=>"[order_type] != 4"];
 
 
 	        /* 
@@ -245,15 +246,18 @@
 
         public function getAdd() {
             $para = Request::all();
+            $user = DB::table('cms_users')->where('id', CRUDBooster::myId())->first();
+            Log::debug('$user = ' . Json::encode($user));
+            Log::debug('stock_ids = ' . $user->stock_id);
             if($para && $para['fast']){
                 $data = [];
                 $data['page_title'] = 'Tạo mới Đơn Hàng Nhanh';
-                $data += ['mode' => 'new'];
+                $data += ['mode' => 'new', 'stock_ids' => $user->stock_id];
                 $this->cbView('fast_sale_order_form',$data);
             }else {
                 $data = [];
                 $data['page_title'] = 'Tạo mới Đơn Hàng';
-                $data += ['mode' => 'new'];
+                $data += ['mode' => 'new', 'stock_ids' => $user->stock_id];
                 $this->cbView('sale_order_form', $data);
             }
         }
@@ -316,6 +320,7 @@
                 CRUDBooster::insertLog(trans('crudbooster.log_try_add_save',['name'=>Request::input($this->title_field),'module'=>CRUDBooster::getCurrentModule()->name ]));
                 CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
             }
+            $order_detail_ids = [];
             DB::beginTransaction();
             try {
                 $para = Request::all();
@@ -336,30 +341,38 @@
                 $order_date_str = $new_order['order_date'];
                 $order_date = DateTime::createFromFormat('Y-m-d H:i:s', $order_date_str);
 
-                // get new order no
-                $last_order = DB::table('gold_sale_orders as SO')
-                    ->whereRaw('SO.deleted_at is null')
-                    ->where('SO.order_date', '>=', $order_date->format('Y-m-d') . ' 00:00:00')
-                    ->where('SO.order_date', '<=', $order_date->format('Y-m-d') . ' 23:59:59')
-                    ->orderBy('SO.order_no', 'desc')
-                    ->first();
-                $new_order_no = '';
-                if ($last_order) {
-                    $old_no = intval(explode('-', $last_order->order_no)[1]);
-                    $new_order_no = '000' . ($old_no + 1);
-                    $new_order_no = substr($new_order_no, strlen($new_order_no) - 3, 3);
-                    $new_order_no = 'DH' . $order_date->format('ymd') . '-' . $new_order_no;
-                } else {
-                    $new_order_no = 'DH' . $order_date->format('ymd') . '-001';
+                if( $new_order['id'] && intval($new_order['id']) > 0) // update order
+                {
+                    $order_id = intval($new_order['id']);
+                    $updated_at = date('Y-m-d H:i:s');
+                    $this->updateOrderHeader($new_order, $updated_at);
                 }
-                $new_order['order_no'] = $new_order_no;
-                $created_at = date('Y-m-d H:i:s');
-                $new_order['created_at'] = $created_at;
-                $new_order['created_by'] = CRUDBooster::myId();
-                unset($new_order['id']);
-                $order_id = DB::table('gold_sale_orders')->insertGetId($new_order);
-                Log::debug('$order_id = ' . $order_id);
-
+                else // new order
+                {
+                    // get new order no
+                    $last_order = DB::table('gold_sale_orders as SO')
+                        ->whereRaw('SO.deleted_at is null')
+                        ->where('SO.order_date', '>=', $order_date->format('Y-m-d') . ' 00:00:00')
+                        ->where('SO.order_date', '<=', $order_date->format('Y-m-d') . ' 23:59:59')
+                        ->orderBy('SO.order_no', 'desc')
+                        ->first();
+                    $new_order_no = '';
+                    if ($last_order) {
+                        $old_no = intval(explode('-', $last_order->order_no)[1]);
+                        $new_order_no = '000' . ($old_no + 1);
+                        $new_order_no = substr($new_order_no, strlen($new_order_no) - 3, 3);
+                        $new_order_no = 'DH' . $order_date->format('ymd') . '-' . $new_order_no;
+                    } else {
+                        $new_order_no = 'DH' . $order_date->format('ymd') . '-001';
+                    }
+                    $new_order['order_no'] = $new_order_no;
+                    $created_at = date('Y-m-d H:i:s');
+                    $new_order['created_at'] = $created_at;
+                    $new_order['created_by'] = CRUDBooster::myId();
+                    unset($new_order['id']);
+                    $order_id = DB::table('gold_sale_orders')->insertGetId($new_order);
+                    Log::debug('$order_id = ' . $order_id);
+                }
                 if ($order_details && count($order_details)) {
                     $new_sale_order_details = [];
                     foreach ($order_details as $detail) {
@@ -372,9 +385,25 @@
                         ];
                         array_push($new_sale_order_details, $new_detail);
                     }
-                    DB::table('gold_sale_order_details')->insert($new_sale_order_details);
-                    foreach ($order_details as $detail) {
-                        DB::table('gold_products')->where('id', $detail['id'])->update(['qty' => 0, 'status' => 0, 'updated_at' => $created_at, 'updated_by' => CRUDBooster::myId(), 'notes' => 'Bán trong đơn hàng ' . $new_order_no]);
+                    if(intval($new_order['order_type']) != 4) // 4: ĐH đang nhập
+                    {
+                        DB::table('gold_sale_order_details')->where('order_id', $order_id)->delete();
+//                        DB::table('gold_sale_order_details')->insert($new_sale_order_details);
+                        foreach ($new_sale_order_details as $new_detail_insert) {
+                            $new_detail_id = DB::table('gold_sale_order_details')->insertGetId($new_detail_insert);
+                            array_push($order_detail_ids, $new_detail_id);
+                        }
+                        foreach ($order_details as $detail) {
+                            DB::table('gold_products')->where('id', $detail['id'])->update(['qty' => 0, 'status' => 0, 'updated_at' => $created_at, 'updated_by' => CRUDBooster::myId(), 'notes' => 'Bán trong đơn hàng ' . $new_order_no]);
+                        }
+                    } else {
+                        DB::table('gold_sale_order_details')->where('order_id', $order_id)->delete();
+                        Log::debug('$new_sale_order_details = ' . Json::encode($new_sale_order_details));
+//                        $order_detail_ids = DB::table('gold_sale_order_details')->insertGetId($new_sale_order_details);
+                        foreach ($new_sale_order_details as $new_detail_insert) {
+                            $new_detail_id = DB::table('gold_sale_order_details')->insertGetId($new_detail_insert);
+                            array_push($order_detail_ids, $new_detail_id);
+                        }
                     }
                 }
 
@@ -388,6 +417,7 @@
                         array_push($new_order_returns, $new_return);
                     }
                     Log::debug('$new_order_returns = ' . Json::encode($new_order_returns));
+                    DB::table('gold_sale_order_returns')->where('order_id', $order_id)->delete();
                     DB::table('gold_sale_order_returns')->insert($new_order_returns);
                 }
                 $new_order_pays = [];
@@ -398,9 +428,12 @@
                         $new_pay['order_id'] = $order_id;
                         array_push($new_order_pays, $new_pay);
                     }
+                    DB::table('gold_sale_order_pays')->where('order_id', $order_id)->delete();
                     DB::table('gold_sale_order_pays')->insert($new_order_pays);
                 }
-                $this->sendNotificationViaEmail($new_order_no, $order_date->format('d/m/Y'), $new_order['customer_id'], $new_order['saler_id']);
+                if(intval($new_order['order_type']) != 4) {
+                    $this->sendNotificationViaEmail($new_order_no, $order_date->format('d/m/Y'), $new_order['customer_id'], $new_order['saler_id']);
+                }
             }
             catch( \Exception $e){
                 DB::rollback();
@@ -408,7 +441,167 @@
                 throw $e;
             }
             DB::commit();
-            return response()->json(['id'=>$order_id, 'order_no'=>$new_order_no]);
+            return response()->json(['id'=>$order_id, 'order_no'=>$new_order_no, 'order_detail_ids'=>$order_detail_ids]);
+        }
+        public function getResumeOrder(){
+            $this->cbLoader();
+            if(!CRUDBooster::isView() && $this->global_privilege==FALSE) {
+                CRUDBooster::insertLog(trans('crudbooster.log_try_add_save',['name'=>Request::input($this->title_field),'module'=>CRUDBooster::getCurrentModule()->name ]));
+                CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+            }
+            $para = Request::all();
+            $order_id = $para['order_id'];
+            $order = DB::table('gold_sale_orders as SO')
+                    ->where('SO.id', $order_id)
+                    ->first();
+            $customer = DB::table('gold_customers as C')
+                ->where('C.id', $order->customer_id)
+                ->first();
+            $order_details = DB::table('gold_sale_order_details as SOD')
+                    ->leftJoin('gold_products as P', 'SOD.product_id', '=', 'P.id')
+                    ->leftJoin('gold_product_types as PT', 'P.product_type_id', '=', 'PT.id')
+                    ->leftJoin('gold_product_groups as PG', 'P.product_group_id', '=', 'PG.id')
+                    ->leftJoin('gold_stocks as S', 'P.stock_id', '=', 'S.id')
+                    ->whereRaw('P.deleted_at is null')
+                    ->where('SOD.order_id', $order_id)
+                    ->select('P.id',
+                        'SOD.id as order_detail_id',
+                        'SOD.age',
+                        'SOD.sort_no as no',
+                        'P.bar_code',
+                        'P.product_code',
+                        'P.product_name',
+                        //'P.product_unit_id',
+                        'P.total_weight',
+                        'P.gem_weight',
+                        'P.gold_weight',
+                        'P.qty',
+                        'P.retail_machining_fee',
+                        'P.whole_machining_fee',
+                        'P.fund_machining_fee',
+                        'P.input_date',
+                        'P.make_stemp_date',
+                        'P.stock_id',
+                        'S.name as stock_name',
+                        //'P.product_category_id',
+                        'P.product_group_id',
+                        'PG.name as product_group_name',
+                        'P.product_type_id',
+                        'PT.name as product_type_name',
+                        'P.status',
+                        'SOD.discount_wage as discount_machining_fee')
+                ->get();
+            return ['order'=>$order, 'customer'=>$customer, 'order_details'=>$order_details];
+        }
+        private function updateOrderHeader($update_order, $updated_at) {
+            if( $update_order['id'] && intval($update_order['id']) > 0) // update order
+            {
+                $order_id = intval($update_order['id']);
+                $update_order['updated_at'] = $updated_at;
+                $update_order['updated_by'] = CRUDBooster::myId();
+                unset($update_order['id']);
+                unset($update_order['created_at']);
+                unset($update_order['created_by']);
+                DB::table('gold_sale_orders')->where('id', $order_id)->update($update_order);
+                Log::debug('$order_id = ' . $order_id);
+            }
+            return $order_id;
+        }
+        public function postUpdateOrderHeader() {
+            $this->cbLoader();
+            if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE) {
+                CRUDBooster::insertLog(trans('crudbooster.log_try_add_save',['name'=>Request::input($this->title_field),'module'=>CRUDBooster::getCurrentModule()->name ]));
+                CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+            }
+            $updated_at = date('Y-m-d H:i:s');
+            DB::beginTransaction();
+            try {
+                $para = Request::all();
+                Log::debug('$para = ' . Json::encode($para));
+                $update_order = $para['order'];
+//                $order_date_str = $update_order['order_date'];
+//                $order_date = DateTime::createFromFormat('Y-m-d H:i:s', $order_date_str);
+
+                $this->updateOrderHeader($update_order, $updated_at);
+            }
+            catch( \Exception $e){
+                DB::rollback();
+                Log::debug('PostAdd error $e = ' . Json::encode($e));
+                throw $e;
+            }
+            DB::commit();
+            return response()->json(['result'=>true]);
+        }
+
+        public function postAddNewOrderDetail() {
+            $this->cbLoader();
+            if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE) {
+                CRUDBooster::insertLog(trans('crudbooster.log_try_add_save',['name'=>Request::input($this->title_field),'module'=>CRUDBooster::getCurrentModule()->name ]));
+                CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+            }
+            $updated_at = date('Y-m-d H:i:s');
+            $order_detail_ids = [];
+            $order_id = null;
+            DB::beginTransaction();
+            try {
+                $para = Request::all();
+                Log::debug('$para = ' . Json::encode($para));
+                $update_order = $para['order'];
+                $order_details = $para['order_details'];
+
+                $order_id = $this->updateOrderHeader($update_order, $updated_at);
+
+                if ($order_details && count($order_details)) {
+//                    $new_sale_order_details = [];
+                    foreach ($order_details as $detail) {
+                        $new_detail = [
+                            'order_id' => $order_id,
+                            'sort_no' => $detail['no'],
+                            'product_id' => $detail['id'],
+                            'age' => $detail['age'] ? $detail['age'] : 0,
+                            'discount_wage' => $detail['discount_machining_fee'] ? $detail['discount_machining_fee'] : 0
+                        ];
+//                        array_push($new_sale_order_details, $new_detail);
+                        $new_detail_id = DB::table('gold_sale_order_details')->insertGetId($new_detail);
+                        array_push($order_detail_ids, $new_detail_id);
+                    }
+//                    $order_detail_ids = DB::table('gold_sale_order_details')->insertGetId($new_sale_order_details);
+                }
+            }
+            catch( \Exception $e){
+                DB::rollback();
+                Log::debug('PostAdd error $e = ' . Json::encode($e));
+                throw $e;
+            }
+            DB::commit();
+            return response()->json(['id'=>$order_id, 'order_detail_ids' => $order_detail_ids]);
+        }
+        public function postRemoveOrderDetail() {
+            $this->cbLoader();
+            if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE) {
+                CRUDBooster::insertLog(trans('crudbooster.log_try_add_save',['name'=>Request::input($this->title_field),'module'=>CRUDBooster::getCurrentModule()->name ]));
+                CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+            }
+            $updated_at = date('Y-m-d H:i:s');
+            DB::beginTransaction();
+            try {
+                $para = Request::all();
+                Log::debug('$para = ' . Json::encode($para));
+                $update_order = $para['order'];
+                $remove_order_detail_id = $para['remove_order_detail_id'];
+                $order_id = intval($update_order['order_id']);
+                if ($order_id > 0) {
+                    DB::table('gold_sale_order_details')->where('id', $remove_order_detail_id)->where('order_id', $order_id)->delete();
+                    $this->updateOrderHeader($update_order, $updated_at);
+                }
+            }
+            catch( \Exception $e){
+                DB::rollback();
+                Log::debug('PostAdd error $e = ' . Json::encode($e));
+                throw $e;
+            }
+            DB::commit();
+            return response()->json(['result' => true]);
         }
         private function sendNotificationViaEmail($order_no, $order_date, $customer_id, $saler_id){
             try {

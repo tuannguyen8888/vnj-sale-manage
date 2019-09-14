@@ -1,7 +1,8 @@
 <?php
 class Enums{
     public static $PRODUCT_STATUS = "0|<lable class='label label-danger'>Hết hàng</lable>;1|<lable class='label label-info'>Còn hàng</lable>";
-    public static $ORDER_TYPES = "3|<lable class='label label-danger'>ĐH vi phạm</lable>;2|<lable class='label label-info'>ĐH chuẩn</lable>;1|<lable class='label label-success'>ĐH nhanh</lable>";
+    public static $ORDER_TYPES = "4|<lable class='label label-warning'>ĐH đang nhập</lable>;3|<lable class='label label-danger'>ĐH vi phạm</lable>;2|<lable class='label label-info'>ĐH chuẩn</lable>;1|<lable class='label label-success'>ĐH nhanh</lable>";
+    public static $TRANFER_TYPES = "2|<lable class='label label-warning'>Trả hàng</lable>;1|<lable class='label label-primary'>Chuyển kho</lable>";
     public static $IMPORT = "0|Phát sinh khi saler bán cho khách hàng mới;1|Import từ bảng công nợ của kế toán";
 }
 
@@ -56,6 +57,11 @@ if (!function_exists('get_product_status')) {
 if (!function_exists('get_order_type_name')) {
     function get_order_type_name($order_type) {
         return get_string_in_array (Enums::$ORDER_TYPES, $order_type);
+    }
+}
+if (!function_exists('get_tranfer_type_name')) {
+    function get_tranfer_type_name($tranfer_type) {
+        return get_string_in_array (Enums::$TRANFER_TYPES, $tranfer_type);
     }
 }
 if (!function_exists('arrayCopy')) {
