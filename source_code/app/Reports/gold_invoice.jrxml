@@ -403,7 +403,7 @@ WHERE SO.id = $P{id}]]>
  VIỆT NGỌC JEWELRY]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="33" y="30" width="40" height="20" uuid="b3a2b783-da95-4681-ab64-a216ae790f07"/>
+				<reportElement x="100" y="30" width="40" height="20" uuid="b3a2b783-da95-4681-ab64-a216ae790f07"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="true"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
@@ -411,7 +411,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Địa chỉ: ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="73" y="30" width="305" height="20" uuid="da6877fc-86f3-485e-a2e9-02c23a845133">
+				<reportElement x="140" y="30" width="305" height="20" uuid="da6877fc-86f3-485e-a2e9-02c23a845133">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
@@ -420,25 +420,6 @@ WHERE SO.id = $P{id}]]>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<text><![CDATA[E7/211B Quốc Lộ 50, ấp 5, xã Phong Phú, Bình Chánh, TP. HCM]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="378" y="30" width="50" height="20" uuid="a9c10e42-6d18-44cd-81de-67bb25f5766c"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-					<font fontName="Arial" isBold="true"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
-				</textElement>
-				<text><![CDATA[Hotline: ]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="428" y="30" width="90" height="20" uuid="3b05309e-cbb7-4925-b21e-1f001b695957">
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
-					<font fontName="Arial" isBold="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
-				</textElement>
-				<text><![CDATA[0939.053.905]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="79" width="90" height="15" uuid="ecfe12d9-4dba-4bab-acbc-deff64211cae">
