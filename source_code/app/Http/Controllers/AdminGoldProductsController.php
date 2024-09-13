@@ -381,6 +381,8 @@
 	    }
 
         public function getImportData() {
+
+            Log::debug('getImportData');
             set_time_limit(0);
             ini_set('memory_limit', '4294967296');
 //            $cacheMethod = PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
@@ -459,7 +461,7 @@
                     Session::put('select_column',$table_columns);
                 } else {
                     //File không đúng định dạng
-//                    Log::debug('File KHONG dung dinh dang');
+                    Log::debug('File KHONG dung dinh dang');
                     $message_all = [sprintf('File không đúng định dạng, vui lòng kiểm tra lại.','File')];
                     $res = redirect()->back()->with(['message'=>trans('crudbooster.alert_validation_error',['error'=>implode(', ',$message_all)]),'message_type'=>'warning'])->withInput();
                     Session::driver()->save();
@@ -510,6 +512,8 @@
 //            return response()->json($dataTableData);
 //        }
         public function postDoneImport() {
+
+            Log::debug('postDoneImport');
             set_time_limit(0);
             ini_set('memory_limit', '4294967296');
             $this->cbLoader();
@@ -520,165 +524,172 @@
             return view('crudbooster::import',$data);
         }
         public function postDoImportChunk() {
-            set_time_limit(0);
-            ini_set('memory_limit', '4294967296');
-            $this->cbLoader();
-            $file_md5 = md5(Request::get('file'));
+            Log::debug('postDoImportChunk');
+            try {
+                set_time_limit(0);
+                ini_set('memory_limit', '-1');
+                $this->cbLoader();
+                $file_md5 = md5(Request::get('file'));
 
-            if(Request::get('file') && Request::get('resume')==1) {
-                $total = Session::get('total_data_import');
-                $prog = intval(Cache::get('success_'.$file_md5)) / $total * 100;
-                $prog = round($prog,2);
-                if($prog >= 100) {
-                    Cache::forget('success_'.$file_md5);
+                if (Request::get('file') && Request::get('resume') == 1) {
+                    $total = Session::get('total_data_import');
+                    $prog = intval(Cache::get('success_' . $file_md5)) / $total * 100;
+                    $prog = round($prog, 2);
+                    if ($prog >= 100) {
+                        Cache::forget('success_' . $file_md5);
+                    }
+                    Log::debug('response progress = ' . $prog);
+                    return response()->json(['progress' => $prog, 'last_error' => Cache::get('error_' . $file_md5)]);
                 }
-                return response()->json(['progress'=> $prog, 'last_error'=>Cache::get('error_'.$file_md5) ]);
-            }
-            $select_column = Session::get('select_column');
-//            Log::debug('$select_column = '.Json::encode($select_column));
-            $table_columns = [
-                'bar_code',
-                'product_code',
-                'product_name',
-                'product_unit_id',
-                'total_weight',
-                'gem_weight',
-                'gold_weight',
-                'qty',
-                'retail_machining_fee',
-                'whole_machining_fee',
-                'fund_machining_fee',
-                'input_date',
-                'make_stemp_date',
-                'stock_id',
-                'product_category_id',
-                'product_group_id',
-                'product_type_id',
-                'status'
-            ];
+                $select_column = Session::get('select_column');
+                Log::debug('$select_column = ' . Json::encode($select_column));
+                $table_columns = [
+                    'bar_code',
+                    'product_code',
+                    'product_name',
+                    'product_unit_id',
+                    'total_weight',
+                    'gem_weight',
+                    'gold_weight',
+                    'qty',
+                    'retail_machining_fee',
+                    'whole_machining_fee',
+                    'fund_machining_fee',
+                    'input_date',
+                    'make_stemp_date',
+                    'stock_id',
+                    'product_category_id',
+                    'product_group_id',
+                    'product_type_id',
+                    'status'
+                ];
 //            $table_columns  =  DB::getSchemaBuilder()->getColumnListing($this->table);
 
 //            $file = base64_decode(Request::get('file'));
 
-            $file = Session::get('path_import_product');
-            $rows = [];
-            Excel::filter('chunk')->load($file)->chunk(1000, function($results) use (&$rows){
-                $rows = array_merge($rows,  $results->toArray());
-            }, false);
-            Session::put('total_data_import',count($rows));
+                $file = Session::get('path_import_product');
+                $rows = [];
+                Excel::filter('chunk')->load($file)->chunk(1000, function ($results) use (&$rows) {
+                    $rows = array_merge($rows, $results->toArray());
+                }, false);
+                Session::put('total_data_import', count($rows));
 //            $rows = Excel::load($file,function($reader) {
 //            })->get();
 //            $rows = Session::get('table_rows');
-            unlink($file);
-            $has_created_at = false;
-            if(CRUDBooster::isColumnExists($this->table,'created_at')) {
-                $has_created_at = true;
-            }
-            $has_created_by = false;
-            if(CRUDBooster::isColumnExists($this->table,'created_by')) {
-                $has_created_by = true;
-            }
-            $has_updated_at = false;
-            if(CRUDBooster::isColumnExists($this->table,'updated_at')) {
-                $has_updated_at = true;
-            }
-            $has_updated_by = false;
-            if(CRUDBooster::isColumnExists($this->table,'updated_by')) {
-                $has_updated_by = true;
-            }
-            Cache::put('success_'.$file_md5, 0, 60*30); // cache trong 30 phút
-//            Log::debug('$rows = '.Json::encode($rows));
-            $data_import_column = array();
-            foreach($rows as $value) {
-//                Log::debug('$value = '.$value);
-                $import_row = array();
-                foreach($select_column as $sk => $s) {
-                    $colname = $table_columns[$sk];
+//////                unlink($file);
+                $has_created_at = false;
+                if (CRUDBooster::isColumnExists($this->table, 'created_at')) {
+                    $has_created_at = true;
+                }
+                $has_created_by = false;
+                if (CRUDBooster::isColumnExists($this->table, 'created_by')) {
+                    $has_created_by = true;
+                }
+                $has_updated_at = false;
+                if (CRUDBooster::isColumnExists($this->table, 'updated_at')) {
+                    $has_updated_at = true;
+                }
+                $has_updated_by = false;
+                if (CRUDBooster::isColumnExists($this->table, 'updated_by')) {
+                    $has_updated_by = true;
+                }
+                Cache::put('success_' . $file_md5, 0, 60 * 30); // cache trong 30 phút
+                Log::debug('$rows = ' . Json::encode($rows));
+                $data_import_column = array();
+                foreach ($rows as $key=>$value) {
+                Log::debug($key.' $value = '.$value);
+                    $import_row = array();
+                    foreach ($select_column as $sk => $s) {
+                        $colname = $table_columns[$sk];
 //                    Log::debug('$sk = '.$sk);
-//                    Log::debug('$colname = '.$colname);
+                    Log::debug('$colname = '.$colname);
 //                    Log::debug('$this->isForeignKey($colname) = '.$this->isForeignKey($colname));
 //                    Log::debug('$s = '.$s);
 //                    Log::debug('$value[$s] = '.$value[$s]);
 //                    Log::debug('$value[$sk] = '.$value[$sk]);
-                    if($colname  == 'status') {
-                        if($value[$s] == '') continue;
-                        elseif ($value[$s] == 'Còn hàng')
-                            $import_row[$colname] = 1;
-                        else
-                            $import_row[$colname] = 0; // Hết hàng
-                    } elseif($colname  == 'input_date') {
-                        if($value[$s] == ''){
-                            $import_row[$colname] = null;
-                        }else{
-                            $tmp_date = DateTime::createFromFormat('d/m/y h:i:s A', $value[$s]);
-                            if($tmp_date) {
-                                $import_row[$colname] = $tmp_date->format('Y-m-d H:i:s');
+                        if ($colname == 'status') {
+                            if ($value[$s] == '') continue;
+                            elseif ($value[$s] == 'Còn hàng')
+                                $import_row[$colname] = 1;
+                            else
+                                $import_row[$colname] = 0; // Hết hàng
+                        } elseif ($colname == 'input_date') {
+                            if ($value[$s] == '') {
+                                $import_row[$colname] = null;
                             } else {
+                                $tmp_date = DateTime::createFromFormat('d/m/y h:i:s A', $value[$s]);
+                                if ($tmp_date) {
+                                    $import_row[$colname] = $tmp_date->format('Y-m-d H:i:s');
+                                } else {
+                                    $import_row[$colname] = null;
+                                }
+                            }
+                        } elseif ($colname == 'make_stemp_date') {
+                            if ($value[$s] == '') {
                                 $import_row[$colname] = null;
+                            } else {
+                                $tmp_date = DateTime::createFromFormat('d/m/y h:i:s A', $value[$s]);
+                                if ($tmp_date) {
+                                    $import_row[$colname] = $tmp_date->format('Y-m-d H:i:s');
+                                } else {
+                                    $import_row[$colname] = null;
+                                }
                             }
-                        }
-                    }  elseif($colname  == 'make_stemp_date') {
-                        if($value[$s] == ''){
-                            $import_row[$colname] = null;
-                        }else{
-                            $tmp_date = DateTime::createFromFormat('d/m/y h:i:s A', $value[$s]);
-                            if($tmp_date) {
-                                $import_row[$colname] = $tmp_date->format('Y-m-d H:i:s');
-                            }else{
-                                $import_row[$colname] = null;
-                            }
-                        }
-                    } elseif($this->isForeignKey($colname)) {
+                        } elseif ($this->isForeignKey($colname)) {
 
-                        //Skip if value is empty
-                        if($value[$s] == '') continue;
+                            //Skip if value is empty
+                            if ($value[$s] == '') continue;
 
-                        if(intval($value[$s]) && $colname != 'product_type_id') {
-                            $import_row[$colname] = $value[$s];
-                        }else{
-                            $relation_table = $this->getTableForeignKey($colname);
-                            $relation_moduls = DB::table('cms_moduls')->where('table_name',$relation_table)->first();
+                            if (intval($value[$s]) && $colname != 'product_type_id') {
+                                $import_row[$colname] = $value[$s];
+                                Log::debug('1$import_row[$colname] = '. $value[$s]);
+                            } else {
+                                $relation_table = $this->getTableForeignKey($colname);
+                                $relation_moduls = DB::table('cms_moduls')->where('table_name', $relation_table)->first();
 
-                            $relation_class = __NAMESPACE__ . '\\' . $relation_moduls->controller;
-                            if(!class_exists($relation_class)) {
-                                $relation_class = '\App\Http\Controllers\\'.$relation_moduls->controller;
-                            }
-                            $relation_class = new $relation_class;
-                            $relation_class->cbLoader();
+                                $relation_class = __NAMESPACE__ . '\\' . $relation_moduls->controller;
+                                if (!class_exists($relation_class)) {
+                                    $relation_class = '\App\Http\Controllers\\' . $relation_moduls->controller;
+                                }
+                                $relation_class = new $relation_class;
+                                $relation_class->cbLoader();
 
-                            $title_field = $relation_class->title_field;
+                                $title_field = $relation_class->title_field;
 
-                            $relation_insert_data = array();
-                            $relation_insert_data[$title_field] = $value[$s];
+                                $relation_insert_data = array();
+                                $relation_insert_data[$title_field] = $value[$s];
 
-                            if(CRUDBooster::isColumnExists($relation_table,'created_at')) {
-                                $relation_insert_data['created_at'] = date('Y-m-d H:i:s');
-                            }
-                            if(CRUDBooster::isColumnExists($relation_table,'created_by')) {
-                                $relation_insert_data['created_by'] = CRUDBooster::myId();
-                            }
-
-                            try{
-                                $relation_exists = DB::table($relation_table)->where($title_field,strval($value[$s]))->first();
-                                if($relation_exists) {
-                                    $relation_primary_key = $relation_class->primary_key;
-                                    $relation_id = $relation_exists->$relation_primary_key;
-                                }else{
-                                    $relation_id = DB::table($relation_table)->insertGetId($relation_insert_data);
+                                if (CRUDBooster::isColumnExists($relation_table, 'created_at')) {
+                                    $relation_insert_data['created_at'] = date('Y-m-d H:i:s');
+                                }
+                                if (CRUDBooster::isColumnExists($relation_table, 'created_by')) {
+                                    $relation_insert_data['created_by'] = CRUDBooster::myId();
                                 }
 
-                                $import_row[$colname] = $relation_id;
-                            }catch(\Exception $e) {
+                                try {
+                                    $relation_exists = DB::table($relation_table)->where($title_field, strval($value[$s]))->first();
+                                    if ($relation_exists) {
+                                        $relation_primary_key = $relation_class->primary_key;
+                                        $relation_id = $relation_exists->$relation_primary_key;
+                                    } else {
+                                        $relation_id = DB::table($relation_table)->insertGetId($relation_insert_data);
+                                    }
 
-                                Log::debug('$e = '.$e);
-                                exit($e);
-                            }
-                        } //END IS INT
+                                    $import_row[$colname] = $relation_id;
+                                    Log::debug('2$import_row[$colname] = '. $relation_id);
+                                } catch (\Exception $e) {
 
-                    }else{
-                        $import_row[$colname] = $value[$s];
+                                    Log::debug('exit exit exit exit exit exit exit exit exit exit ');
+                                    Log::error('$e = ' . $e);
+
+                                    exit($e);
+                                }
+                            } //END IS INT
+
+                        } else {
+                            $import_row[$colname] = $value[$s];
+                        }
                     }
-                }
 
 //                Log::debug('$import_row = '.Json::encode($import_row));
 //
@@ -694,43 +705,53 @@
 //
 //                Log::debug('$has_title_field = '.$has_title_field);
 //                if($has_title_field==false) continue;
-                if(!$import_row['bar_code']){
-                    Cache::increment('success_'.$file_md5);
-                    continue;
-                }
-                try{
-                    $row_exists = DB::table($this->table)->where('bar_code', $import_row['bar_code'])->first();
-                    if(!$row_exists) {
-                        if($has_created_at) {
-                            $import_row['created_at'] = date('Y-m-d H:i:s');
-                        }
-                        if($has_created_by){
-                            $import_row['created_by'] = CRUDBooster::myId();
-                        }
-
-                        DB::table($this->table)->insert($import_row);
-                    } else {
-                        if($has_updated_at) {
-                            $import_row['updated_at'] = date('Y-m-d H:i:s');
-                        }
-                        if($has_updated_by){
-                            $import_row['updated_by'] = CRUDBooster::myId();
-                        }
-                        DB::table($this->table)->where('id', $row_exists->id)->update($import_row);
+                    Log::debug('increment');
+                    if (!$import_row['bar_code']) {
+                        Cache::increment('success_' . $file_md5);
+                        continue;
                     }
-                    Cache::increment('success_'.$file_md5);
-                }catch(\Exception $e) {
-                    Log::debug('error $import_row = ' . Json::encode($import_row));
-                    Log::debug('error $value = ' . Json::encode($value));
-                    $e = (string) $e;
-                    Log::debug('(string) $e = '.$e);
-                    Cache::put('error_'.$file_md5,$e,500);
-                }
-            }
+                    try {
+                        $row_exists = DB::table($this->table)->where('bar_code', $import_row['bar_code'])->first();
+                        Log::debug('$row_exists = ', [$row_exists]);
+                        if (!$row_exists) {
+                            if ($has_created_at) {
+                                $import_row['created_at'] = date('Y-m-d H:i:s');
+                            }
+                            if ($has_created_by) {
+                                $import_row['created_by'] = CRUDBooster::myId();
+                            }
 
-            Log::debug('đã import '.count($rows). ' dòng xong');
-            $rows = null;
-            Session::put('table_rows',null);//đặt lại cho đỡ nặng memory
+                            DB::table($this->table)->insert($import_row);
+                            Log::debug('insert');
+                        } else {
+                            if ($has_updated_at) {
+                                $import_row['updated_at'] = date('Y-m-d H:i:s');
+                            }
+                            if ($has_updated_by) {
+                                $import_row['updated_by'] = CRUDBooster::myId();
+                            }
+                            DB::table($this->table)->where('id', $row_exists->id)->update($import_row);
+                            Log::debug('update');
+                        }
+                        Cache::increment('success_' . $file_md5);
+                    } catch (\Exception $e) {
+                        Log::debug('error $import_row = ' . Json::encode($import_row));
+                        Log::debug('error $value = ' . Json::encode($value));
+                        $e = (string)$e;
+                        Log::debug('(string) $e = ' . $e);
+                        Cache::put('error_' . $file_md5, $e, 500);
+                    }
+                    Log::debug('done increment');
+                }
+
+                Log::debug('đã import ' . count($rows) . ' dòng xong');
+                $rows = null;
+                Session::put('table_rows', null);//đặt lại cho đỡ nặng memory
+            }
+            catch (\Exception $e) {
+                Log::debug('(string) $e = ' . $e);
+            }
+            Log::debug('response status = true');
             return response()->json(['status'=>true]);
         }
         public function getTableForeignKey($fieldName)

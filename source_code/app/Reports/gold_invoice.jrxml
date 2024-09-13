@@ -419,7 +419,7 @@ WHERE SO.id = $P{id}]]>
 					<font fontName="Arial" isBold="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[E7/211B Quốc Lộ 50, ấp 5, xã Phong Phú, Bình Chánh, TP. HCM]]></text>
+				<text><![CDATA[828 Hưng Phú, Phường 10, Quận 8, TP HCM.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="79" width="90" height="15" uuid="ecfe12d9-4dba-4bab-acbc-deff64211cae">

@@ -12,6 +12,8 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="220"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="780"/>
 	<subDataset name="order_details_ds" uuid="74e01e18-3c87-41dc-b762-38294dda5789">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="gold_sales_manage_connection"/>
@@ -30,7 +32,7 @@
 	P.total_weight,
     P.gem_weight,
     P.gold_weight,
-    round(P.gold_weight * SOD.age / 100, 3) as exchange_g10,
+    vnj_round(P.gold_weight * SOD.age / 100, 3) as exchange_g10,
     P.retail_machining_fee as wage,
     SOD.age,
     SOD.discount_wage 
@@ -121,7 +123,7 @@ ORDER BY SOD.age, P.product_code]]>
     sum(P.gem_weight) as gem_weight,
     sum(P.gold_weight) as gold_weight,
     SOD.age as sell_age,
-    round(sum(P.gold_weight) * SOD.age / 100, 3) as exchange_g10,
+    vnj_round(sum(P.gold_weight) * SOD.age / 100, 3) as exchange_g10,
     sum(P.retail_machining_fee) as wage
 FROM gold_sale_order_details as SOD
 LEFT JOIN gold_products as P ON SOD.product_id = P.id
@@ -205,7 +207,7 @@ GROUP BY product_group_name, product_type_name, sell_age]]>
     IFNULL((SELECT sum(P.total_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_weight,
     IFNULL((SELECT sum(P.gem_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_gem_weight,
     IFNULL((SELECT sum(P.gold_weight) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_gold_weight,
-    IFNULL((SELECT sum( round(P.gold_weight * SOD.age / 100, 3)) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_exchange_g10,
+    IFNULL((SELECT vnj_round(sum( P.gold_weight * SOD.age / 100),3) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_exchange_g10,
     IFNULL((SELECT sum(P.retail_machining_fee) FROM gold_sale_order_details as SOD LEFT JOIN gold_products as P ON SOD.product_id = P.id WHERE SOD.order_id = SO.id ),0) as total_wage,
     SO.sampling_discount,
     SO.reduce,
@@ -319,7 +321,7 @@ WHERE SO.id = $P{id}]]>
 					<font fontName="Arial" isBold="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[E7/211B Quốc Lộ 50, ấp 5, xã Phong Phú, Bình Chánh, TP. HCM]]></text>
+				<text><![CDATA[828 Hưng Phú, Phường 10, Quận 8, TP HCM.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="117" y="50" width="100" height="20" uuid="3b05309e-cbb7-4925-b21e-1f001b695957">
@@ -336,7 +338,7 @@ WHERE SO.id = $P{id}]]>
 					<font fontName="Arial" isBold="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[ĐT: 02822.670.670]]></text>
+				<text><![CDATA[ĐT: 02866.81.8998]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="330" y="0" width="70" height="20" uuid="8ffbb9b0-1b0e-4f1e-8189-7df68fce153b">

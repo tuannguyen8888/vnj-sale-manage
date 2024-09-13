@@ -28,7 +28,7 @@
 	P.total_weight,
     P.gem_weight,
     P.gold_weight,
-    round(P.gold_weight * (CONVERT(PT.name, DECIMAL)/10) / 100, 3) as exchange_g10,
+    vnj_round(P.gold_weight * (CONVERT(PT.name, DECIMAL)/10) / 100, 3) as exchange_g10,
     P.retail_machining_fee as wage,
     (CONVERT(PT.name, DECIMAL)/10) as age
 FROM gold_stocks_transfer_detail as STD
@@ -106,7 +106,7 @@ ORDER BY age, P.product_code]]>
     sum(P.gem_weight) as gem_weight,
     sum(P.gold_weight) as gold_weight,
     (CONVERT(PT.name, DECIMAL)/10)  as sell_age,
-    round(sum(P.gold_weight) * (CONVERT(PT.name, DECIMAL)/10)  / 100, 3) as exchange_g10,
+    vnj_round(sum(P.gold_weight) * (CONVERT(PT.name, DECIMAL)/10)  / 100, 3) as exchange_g10,
     sum(P.retail_machining_fee) as wage
 FROM gold_stocks_transfer_detail as STD
 LEFT JOIN gold_products as P ON STD.product_id = P.id
@@ -189,7 +189,7 @@ GROUP BY product_group_name, product_type_name, sell_age]]>
     IFNULL((SELECT sum(P.total_weight) FROM gold_stocks_transfer_detail as STD LEFT JOIN gold_products as P ON STD.product_id = P.id WHERE STD.stocks_transfer_id = ST.id ),0) as total_weight,
     IFNULL((SELECT sum(P.gem_weight) FROM gold_stocks_transfer_detail as STD LEFT JOIN gold_products as P ON STD.product_id = P.id WHERE STD.stocks_transfer_id = ST.id ),0) as total_gem_weight,
     IFNULL((SELECT sum(P.gold_weight) FROM gold_stocks_transfer_detail as STD LEFT JOIN gold_products as P ON STD.product_id = P.id WHERE STD.stocks_transfer_id = ST.id ),0) as total_gold_weight,
-    IFNULL((SELECT sum( round(P.gold_weight * (CONVERT(PT.name, DECIMAL)/10) / 100, 3)) FROM gold_stocks_transfer_detail as STD LEFT JOIN gold_products as P ON STD.product_id = P.id  LEFT JOIN gold_product_types as PT ON P.product_type_id =  PT.id WHERE STD.stocks_transfer_id = ST.id ),0) as total_exchange_g10,
+    IFNULL((SELECT sum( vnj_round(P.gold_weight * (CONVERT(PT.name, DECIMAL)/10) / 100, 3)) FROM gold_stocks_transfer_detail as STD LEFT JOIN gold_products as P ON STD.product_id = P.id  LEFT JOIN gold_product_types as PT ON P.product_type_id =  PT.id WHERE STD.stocks_transfer_id = ST.id ),0) as total_exchange_g10,
     IFNULL((SELECT sum(P.retail_machining_fee) FROM gold_stocks_transfer_detail as STD LEFT JOIN gold_products as P ON STD.product_id = P.id WHERE STD.stocks_transfer_id = ST.id ),0) as total_wage
 FROM gold_stocks_transfer as ST
 LEFT JOIN cms_users as U ON ST.created_by = U.id
@@ -270,7 +270,7 @@ WHERE ST.id = $P{id}]]>
 					<font fontName="Arial" isBold="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[E7/211B Quốc Lộ 50, ấp 5, xã Phong Phú, Bình Chánh, TP. HCM]]></text>
+				<text><![CDATA[828 Hưng Phú, Phường 10, Quận 8, TP HCM.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="330" y="20" width="70" height="20" uuid="3b05309e-cbb7-4925-b21e-1f001b695957">
@@ -441,7 +441,7 @@ WHERE ST.id = $P{id}]]>
 					<font fontName="Arial" isBold="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[ĐT: 02822.670.670]]></text>
+				<text><![CDATA[ĐT: 02866.81.8998]]></text>
 			</staticText>
 		</band>
 	</title>

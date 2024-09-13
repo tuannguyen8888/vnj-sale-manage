@@ -316,7 +316,7 @@
                               <h4>Vui lòng chọn file Upload</h4>
                                 * File phải ở định dạng : xls, xlsx<br/>
                                 * Dòng đầu tiên phải là tên các cột trong bảng.<br/>
-                                * Để đảm bảo dữ liệu được import đầy đủ: Dung lượng File tối đa là 4MB, nếu file lớn hơn 4MB, hãy chia nhỏ nó.<br/>
+                                * Để đảm bảo dữ liệu được import đầy đủ: File chỉ được chứa tối đa 3000 dòng, nếu lớn hơn 3000 dòng thì hãy chia nhỏ nó và import nhiều lần.<br/>
                             </div>
                             <div class='form-group'>
                                 <label>File import</label>

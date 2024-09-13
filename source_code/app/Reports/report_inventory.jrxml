@@ -163,7 +163,7 @@ FROM (
 	LEFT JOIN gold_products as P ON SOD.product_id = P.id
 	WHERE FIND_IN_SET(P.stock_id ,  $P{stock_ids} ) > 0   and order_date >=  $P{from_date} 
 	-- GROUP BY P.product_group_id
-) as S ]]>
+) as S]]>
 	</queryString>
 	<field name="begin_qty" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="begin_qty"/>
@@ -220,7 +220,7 @@ FROM (
 					<font fontName="Arial" isBold="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[E7/211B Quốc Lộ 50, ấp 5, xã Phong Phú, Bình Chánh, TP. HCM]]></text>
+				<text><![CDATA[828 Hưng Phú, Phường 10, Quận 8, TP HCM.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="44" width="217" height="20" uuid="3b05309e-cbb7-4925-b21e-1f001b695957">
@@ -237,7 +237,7 @@ FROM (
 					<font fontName="Arial" isBold="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[ĐT: 02822.670.670]]></text>
+				<text><![CDATA[ĐT: 02866.81.8998]]></text>
 			</staticText>
 		</band>
 	</title>
