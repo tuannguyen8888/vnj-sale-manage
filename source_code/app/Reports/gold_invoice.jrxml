@@ -394,16 +394,16 @@ WHERE SO.id = $P{id}]]>
 	<title>
 		<band height="346" splitType="Stretch">
 			<staticText>
-				<reportElement x="130" y="0" width="300" height="30" uuid="beb19bc4-015f-4fea-9e74-01b6c0f4bfa0"/>
+				<reportElement x="25" y="0" width="500" height="30" uuid="beb19bc4-015f-4fea-9e74-01b6c0f4bfa0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="true"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
 				</textElement>
-				<text><![CDATA[CÔNG TY TNHH ĐẦU TƯ THƯƠNG MẠI XUẤT NHẬP KHẨU
- VIỆT NGỌC JEWELRY]]></text>
+				<text><![CDATA[CÔNG TY TNHH PHÂN PHỐI THƯƠNG MẠI VÀNG TRANG SỨC
+VIỆT NGỌC JEWELRY]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="100" y="30" width="40" height="20" uuid="b3a2b783-da95-4681-ab64-a216ae790f07"/>
+				<reportElement x="100" y="30" width="40" height="15" uuid="b3a2b783-da95-4681-ab64-a216ae790f07"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="true"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
@@ -411,7 +411,7 @@ WHERE SO.id = $P{id}]]>
 				<text><![CDATA[Địa chỉ: ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="140" y="30" width="305" height="20" uuid="da6877fc-86f3-485e-a2e9-02c23a845133">
+				<reportElement x="140" y="30" width="305" height="15" uuid="da6877fc-86f3-485e-a2e9-02c23a845133">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
@@ -419,7 +419,15 @@ WHERE SO.id = $P{id}]]>
 					<font fontName="Arial" isBold="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="2.0" leftIndent="5" rightIndent="5"/>
 				</textElement>
-				<text><![CDATA[828 Hưng Phú, Phường 10, Quận 8, TP HCM.]]></text>
+				<text><![CDATA[828 Hưng Phú - P. Chánh Hưng Q.8 - TP.HCM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="45" width="550" height="10" uuid="aeb717fd-e373-44fa-95a0-1960211f990e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0"/>
+				</textElement>
+				<text><![CDATA[MST: 0318830034]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="79" width="90" height="15" uuid="ecfe12d9-4dba-4bab-acbc-deff64211cae">
